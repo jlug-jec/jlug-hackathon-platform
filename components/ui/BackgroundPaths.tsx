@@ -1,9 +1,9 @@
 "use client";
-import Schedule from "../Schedule";
-import FAQ from "../FAQ";
-import Pricing from "../Pricing";
-import Contact from "../Contact";
-import Footer from "../Footer";
+import Schedule from "../home/Schedule";
+import FAQ from "../home/FAQ";
+import Pricing from "../home/Pricing";
+import Contact from "../home/Contact";
+import Footer from "../home/Footer";
 
 import { motion } from "framer-motion";
 

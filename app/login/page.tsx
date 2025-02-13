@@ -1,20 +1,10 @@
 "use client";
 
-import { signIn, useSession } from "next-auth/react";
+import { signIn} from "next-auth/react";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+
 
 export default function LoginPage() {
-  const { data: session } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (session) {
-      router.push('/register');
-    }
-  }, [session, router]);
-
   const handleSignIn = async () => {
     await signIn("google", {
       callbackUrl: "/register",
