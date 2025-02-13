@@ -3,23 +3,24 @@ import { NextResponse } from "next/server";
 
 export default withAuth(
   function middleware(req) {
-    // If user is authenticated and tries to access login/register, redirect to hackathon
-    if (req.nextauth.token && (req.nextUrl.pathname.startsWith('/login'))) {
-      return NextResponse.redirect(new URL('/hackathon', req.url));
-    }
+    const isAuth = !!req.nextauth.token;
+    const isLoginPage = req.nextUrl.pathname.startsWith('/login');
+    const isApiAuthRoute = req.nextUrl.pathname.startsWith('/api/auth');
 
-    // Allow authentication endpoints
-    if (req.nextUrl.pathname.startsWith('/api/auth')) {
+    // Allow authentication API endpoints
+    if (isApiAuthRoute) {
       return NextResponse.next();
     }
 
-    // Protect API routes and register page
-    if (req.nextUrl.pathname.startsWith('/api') || req.nextUrl.pathname.startsWith('/register') || req.nextUrl.pathname.startsWith('/login')) {
-      if (!req.nextauth.token) {
-        return NextResponse.json(
-          { error: "Unauthorized" },
-          { status: 401 }
-        );
+    // Redirect authenticated users away from auth pages
+    if (isAuth && (isLoginPage || req.nextUrl.pathname.startsWith('/register'))) {
+      return NextResponse.redirect(new URL('/hackathon', req.url));
+    }
+
+    // Redirect unauthenticated users to login, including register page
+    if (!isAuth) {
+      if (!isLoginPage) {
+        return NextResponse.redirect(new URL('/login', req.url));
       }
     }
 
@@ -27,11 +28,16 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token,
+      authorized: ({ token }) => true,
     },
   }
 );
 
 export const config = {
-  matcher: ['/api/:path*', '/register/:path*', '/login/:path*', '/hackathon/:path*']
+  matcher: [
+    '/login',
+    '/register',
+    '/hackathon',
+    '/api/:path*'
+  ]
 };
