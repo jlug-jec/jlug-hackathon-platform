@@ -8,31 +8,41 @@ export default withAuth(
     const isRegisterPage = req.nextUrl.pathname.startsWith('/register');
     const isApiAuthRoute = req.nextUrl.pathname.startsWith('/api/auth');
 
+    console.log('--- Middleware Debug Logs ---');
+    console.log('Current Path:', req.nextUrl.pathname);
+    console.log('Is Authenticated:', isAuth);
+    console.log('Token:', req.nextauth.token);
+    console.log('Is Login Page:', isLoginPage);
+    console.log('Is Register Page:', isRegisterPage);
+    console.log('Is API Auth Route:', isApiAuthRoute);
+
     // Allow authentication API endpoints
     if (isApiAuthRoute) {
+      console.log('→ Allowing API auth route');
       return NextResponse.next();
     }
 
-    // Redirect authenticated users from login to register
-    if (isAuth && isLoginPage) {
-      return NextResponse.redirect(new URL('/register', req.url));
-    }
-
-    // Allow authenticated users to access register page
-    if (isAuth && isRegisterPage) {
-      return NextResponse.next();
+    // Redirect authenticated users to hackathon page
+    if (isAuth && (isLoginPage || isRegisterPage)) {
+      console.log('→ Authenticated user trying to access auth pages, redirecting to hackathon');
+      return NextResponse.redirect(new URL('/hackathon', req.url));
     }
 
     // Redirect unauthenticated users to login
     if (!isAuth && !isLoginPage) {
+      console.log('→ Unauthenticated user, redirecting to login');
       return NextResponse.redirect(new URL('/login', req.url));
     }
 
+    console.log('→ Allowing request to proceed');
     return NextResponse.next();
   },
   {
     callbacks: {
-      authorized: ({ token }) => true,
+      authorized: ({ token }) => {
+        console.log('Auth Callback - Token:', token);
+        return true;
+      },
     },
   }
 );
