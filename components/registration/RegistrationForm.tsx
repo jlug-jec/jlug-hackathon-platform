@@ -58,9 +58,9 @@ export function RegistrationForm({ steps, initialData }: RegistrationFormProps) 
         }
         setIsInitialLoading(false);
       }
-      else{
-        router.push('/login');
+      if(!session?.user?.email){
         toast.error("You are not logged in!");
+        router.push('/login');
       }
     }
     checkTeam();
