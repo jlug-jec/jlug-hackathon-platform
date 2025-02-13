@@ -1,5 +1,5 @@
-import BackgroundPaths from "@/components/ui/BackgroundPaths";
+import { LandingPage } from "@/components/ui/LandingPage";
 
 export default function Page() {
-  return <BackgroundPaths />
+  return <LandingPage />
 }
