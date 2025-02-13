@@ -18,6 +18,10 @@ const handler = NextAuth({
       }
       return false;
     },
+    async redirect({ url, baseUrl }) {
+      
+      return `/register`;
+    }
   },
   pages: {
     signIn: '/login',
