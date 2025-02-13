@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 
 export default function HackathonPage() {
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-8">
       <motion.div

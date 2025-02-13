@@ -31,20 +31,20 @@ export function RegistrationForm({ steps, initialData }: RegistrationFormProps) 
   const formRef = useRef<HTMLFormElement>(null);
   const { data:session } = useSession();
 
-  // Check for existing team on mount
+
   useEffect(() => {
     async function checkTeam() {
+      if (!session) return; // Wait for session to be available
+      
       if (session?.user?.email) {
         const result = await checkAndCreateTeam(session.user.email, null) as TeamResponse;
         if (result.exists && result.team) {
-          // Check if team has payment screenshot
           if (result.team.paymentScreenshot) {
             toast.info("You have already completed registration!");
             router.push('/hackathon');
             return;
           }
 
-          // Fill all team data from existing team
           setFormData(prev => ({
             ...prev,
             teamName: result.team.teamName,
@@ -56,15 +56,11 @@ export function RegistrationForm({ steps, initialData }: RegistrationFormProps) 
           setCurrentStep(steps[1].id);
           toast.info("Your team data has been loaded!");
         }
-        setIsInitialLoading(false);
       }
-      if(!session?.user?.email){
-        toast.error("You are not logged in!");
-        router.push('/login');
-      }
+      setIsInitialLoading(false);
     }
     checkTeam();
-  }, [session?.user?.email, router]);
+  }, [session, router]);
 
   const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
   const CurrentStepComponent = steps[currentStepIndex].component;

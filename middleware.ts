@@ -1,6 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
+// TODO: FIX middleware instead of SESSION based checks
 export default withAuth(
   function middleware(req) {
     const isAuth = !!req.nextauth.token;

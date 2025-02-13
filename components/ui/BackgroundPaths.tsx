@@ -120,7 +120,7 @@ export function BackgroundPaths({ title = "KumbhCode" }: { title?: string }) {
                               text-black dark:text-white transition-all duration-300 
                               group-hover:-translate-y-0.5 border border-black/10 dark:border-white/10
                               hover:shadow-md dark:hover:shadow-neutral-800/50"
-                onClick={() => router.push("/register")}
+                onClick={() => router.push("/login")}
               >
                 <span className="opacity-90 group-hover:opacity-100 transition-opacity">
                   Discover Excellence
