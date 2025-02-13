@@ -5,7 +5,6 @@ export default withAuth(
   function middleware(req) {
     const isAuth = !!req.nextauth.token;
     const isLoginPage = req.nextUrl.pathname.startsWith('/login');
-    const isRegisterPage = req.nextUrl.pathname.startsWith('/register');
     const isApiAuthRoute = req.nextUrl.pathname.startsWith('/api/auth');
 
     console.log('--- Middleware Debug Logs ---');
@@ -13,7 +12,7 @@ export default withAuth(
     console.log('Is Authenticated:', isAuth);
     console.log('Token:', req.nextauth.token);
     console.log('Is Login Page:', isLoginPage);
-    console.log('Is Register Page:', isRegisterPage);
+
     console.log('Is API Auth Route:', isApiAuthRoute);
 
     // Allow authentication API endpoints
@@ -23,7 +22,7 @@ export default withAuth(
     }
 
     // Redirect authenticated users to hackathon page
-    if (isAuth && (isLoginPage || isRegisterPage)) {
+    if (isAuth && (isLoginPage)) {
       console.log('→ Authenticated user trying to access auth pages, redirecting to hackathon');
       return NextResponse.redirect(new URL('/hackathon', req.url));
     }
@@ -50,7 +49,6 @@ export default withAuth(
 export const config = {
   matcher: [
     '/login',
-    '/register',
     '/hackathon',
     '/api/:path*'
   ]
