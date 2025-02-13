@@ -1,9 +1,27 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.push('/register');
+    }
+  }, [session, router]);
+
+  const handleSignIn = async () => {
+    await signIn("google", {
+      callbackUrl: "/register",
+      redirect: true
+    });
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
       <motion.div 
@@ -14,7 +32,7 @@ export default function LoginPage() {
       >
         <h1 className="text-3xl font-bold text-white text-center mb-8">Welcome to CodeKumbh</h1>
         <button
-          onClick={() => signIn("google")}
+          onClick={handleSignIn}
           className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 px-6 py-3 rounded-lg hover:bg-white/90 transition-colors"
         >
           <img src="/google.svg" alt="Google" className="w-5 h-5" />
