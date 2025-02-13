@@ -13,7 +13,7 @@ export default withAuth(
     }
 
     // Redirect authenticated users away from auth pages
-    if (isAuth && (isLoginPage || req.nextUrl.pathname.startsWith('/register'))) {
+    if (isAuth && isLoginPage) {
       return NextResponse.redirect(new URL('/hackathon', req.url));
     }
 

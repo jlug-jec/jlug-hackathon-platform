@@ -6,6 +6,25 @@ export async function checkAndCreateTeam(email: string, teamData: any) {
   try {
     const teamCheck = await checkExistingTeam(email);
     
+
+    if (teamData) {
+      try {
+        const response = await fetch(process.env.NEXT_SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(teamData),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const responseText = await response.text();
+        console.log('Spreadsheet response:', responseText);
+        
+      } catch (error) {
+        console.error('Error logging team data to spreadsheet:', error);
+      }
+    }
+    
     if (teamCheck.exists && !teamData) {
       return {
         success: true,
@@ -25,7 +44,7 @@ export async function checkAndCreateTeam(email: string, teamData: any) {
       };
     }
 
-    // Create new team
+
     const result = await createTeam(teamData);
     return {
       success: result.success,
