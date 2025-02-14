@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { uploadToCloudinary } from '@/lib/cloudinary';
+import { uploadToCloudinary } from "@/lib/cloudinary";
 
 interface PaymentFormProps {
   data: any;
@@ -9,7 +9,11 @@ interface PaymentFormProps {
   onValidityChange: (isValid: boolean) => void;
 }
 
-export function PaymentForm({ data, onChange, onValidityChange }: PaymentFormProps) {
+export function PaymentForm({
+  data,
+  onChange,
+  onValidityChange,
+}: PaymentFormProps) {
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
@@ -28,11 +32,11 @@ export function PaymentForm({ data, onChange, onValidityChange }: PaymentFormPro
       const url = await uploadToCloudinary(file);
       onChange({ paymentScreenshot: url });
       onValidityChange(true);
-      toast.success('Screenshot uploaded successfully!');
+      toast.success("Screenshot uploaded successfully!");
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error("Error uploading file:", error);
       onValidityChange(false);
-      toast.error('Failed to upload screenshot');
+      toast.error("Failed to upload screenshot");
     } finally {
       setIsUploading(false);
     }
@@ -42,17 +46,22 @@ export function PaymentForm({ data, onChange, onValidityChange }: PaymentFormPro
     <div className="space-y-6">
       <div className="text-center">
         <img
-          src="/qr-code-placeholder.png"
+          src="/qr-code.jpg"
           alt="Payment QR Code"
           className="mx-auto w-48 h-48 bg-white/10 rounded-lg mb-4"
         />
-        <p className="text-white text-sm mb-2">Scan the QR code to make the payment</p>
+        <p className="text-white text-sm mb-2">
+          Scan the QR code to make the payment
+        </p>
         <p className="text-yellow-400 text-sm mb-6 italic">
-          Note: Additional charges may apply for food and refreshments on the Hackathon day.
+          Note: Additional charges may apply for food and refreshments on the
+          Hackathon day.
         </p>
       </div>
       <div>
-        <label className="block text-white text-sm font-medium mb-2">Upload Payment Screenshot</label>
+        <label className="block text-white text-sm font-medium mb-2">
+          Upload Payment Screenshot
+        </label>
         <input
           type="file"
           accept="image/*"
@@ -65,10 +74,12 @@ export function PaymentForm({ data, onChange, onValidityChange }: PaymentFormPro
         )}
         {data.paymentScreenshot && (
           <div className="mt-4">
-            <p className="text-green-400 text-sm">Screenshot uploaded successfully!</p>
-            <img 
-              src={data.paymentScreenshot} 
-              alt="Payment Screenshot" 
+            <p className="text-green-400 text-sm">
+              Screenshot uploaded successfully!
+            </p>
+            <img
+              src={data.paymentScreenshot}
+              alt="Payment Screenshot"
               className="mt-2 max-w-xs rounded-lg border border-white/10"
             />
           </div>
