@@ -4,11 +4,13 @@ import { checkExistingTeam, createTeam, updateTeam } from "@/lib/firebase/utils"
 
 export async function checkAndCreateTeam(email: string, teamData: any) {
   try {
+
     const teamCheck = await checkExistingTeam(email);
     
 
     if (teamData) {
       try {
+        console.log(teamData)
         const response = await fetch(process.env.NEXT_SCRIPT_URL, {
           method: 'POST',
           body: JSON.stringify(teamData),

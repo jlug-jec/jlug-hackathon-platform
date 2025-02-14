@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
 import MainSection from "../home/MainSection";
-import AnimatedStarryBackground from "./AnimatedStarryBackground";
 import StarryBackground from "./StarryBackground";
 import FloatingPaths from "./FloatingPath";
 import HeroSection from "../home/HeroSection";

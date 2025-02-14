@@ -1,128 +1,94 @@
-## JLUG Hackathon Platform
+# CodeKumbh - JEC's 24-Hour Hackathon Platform
 
-A modern hackathon management platform built with Next.js 14, featuring server components, API routes, and Google Sheets integration.
+<div align="center">
+  <h3>A modern hackathon platform with space-themed UI and real-time team management</h3>
+</div>
+
 <img width="988" alt="image" src="https://github.com/user-attachments/assets/3452bf37-d18f-4245-b248-3f48c1b31c66" />
-## Features
+
+## ✨ Features
 
 ### Core Features
-- 🔐 Authentication using Next-Auth
-- 📝 Team registration system
-- 📊 Google Sheets integration for data management
-- ✉️ Automated email notifications
-- 📤 Project submission portal
-- 📱 Responsive design with Tailwind CSS
+- 🔐 **Secure Authentication**: Google OAuth integration with NextAuth.js
+- 👥 **Team Management**: Create and manage hackathon teams
+- 📊 **Real-time Updates**: Firebase Firestore integration
+- 📱 **Responsive Design**: Works seamlessly on all devices
+- 🌌 **Space Theme**: Interactive UI with particle effects and animations
+- 📑 **Automated Registration**: Google Sheets integration for participant tracking
 
-### Technical Features
-- ⚡ Server and Client Components
-- 🔄 Server Actions for form handling
-- 📡 API Routes for external integrations
-- 🎨 Styled using Tailwind CSS & Shadcn UI
-- 📦 Type-safe with TypeScript
+### Technical Stack
+- ⚛️ Next.js 15 with App Router
+- 🎨 TailwindCSS + Framer Motion
+- 🔥 Firebase (Firestore)
+- 🔒 NextAuth.js
+- 📝 Google Sheets API
+- 🎭 Shadcn UI Components
 
-## Tech Stack
+## 🚀 Getting Started
 
-- **Framework**: Next.js 14
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS + Shadcn UI
-- **Authentication**: Next-Auth
-- **Database**: Google Sheets
-- **Email**: Nodemailer/Google Apps Script
-- **Deployment**: Vercel
 
-## Project Structure
+
+📁 Project Structure
 
 ```
-src/
 ├── app/
-│   ├── (auth)/
-│   │   ├── login/
-│   │   └── register/
-│   ├── dashboard/
-│   ├── submit/
-│   ├── api/
-│   └── layout.tsx
+│   ├── actions/         # Server actions
+│   ├── api/            # API routes
+│   ├── hackathon/      # Hackathon dashboard
+│   ├── login/          # Authentication
+│   └── register/       # Team registration
 ├── components/
-│   ├── forms/
-│   │   ├── RegistrationForm.tsx
-│   │   └── SubmissionForm.tsx
-│   └── ui/
+│   ├── home/           # Landing page components
+│   └── ui/             # Reusable UI components
 ├── lib/
-│   ├── auth.ts
-│   └── sheets.ts
-└── types/
-    └── index.ts
+│   ├── firebase/       # Firebase configuration
+│   ├── providers/      # Context providers
+│   └── utils.ts        # Utility functions
+└── public/             # Static assets
 ```
 
-## Getting Started
 
-1. **Clone and Install**
+1. **Clone the repository**
 ```bash
-git clone [your-repository-url]
-cd hackathon-platform
-npm install
+git clone https://github.com/yourusername/codekumbh.git
+cd codekumbh
 ```
 
-2. **Environment Setup**
-Create a `.env.local` file:
-```env
-# Google Sheets
-GOOGLE_SERVICE_ACCOUNT_EMAIL=
-GOOGLE_PRIVATE_KEY=
-GOOGLE_SHEET_ID=
+2. Install dependencies
+```bash
+pnpm install
+ ```
 
-# Next-Auth
+3. Set up environment variables Create a .env.local file with:
+
+
+```
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+NEXTAUTH_URL=
 NEXTAUTH_SECRET=
-NEXTAUTH_URL=http://localhost:3000
-
-# Email (Optional)
-EMAIL_SERVER=
-EMAIL_FROM=
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=
+NEXT_SCRIPT_URL=
+NEXT_PUBLIC_WHATSAPP_URL=
 ```
 
-3. **Google Sheets Setup**
-```javascript
-// Create service account and enable Google Sheets API
-// Add service account email to your Google Sheet sharing settings
-```
-
-4. **Development**
+4. Run the development server
 ```bash
-npm run dev
+# Run development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Run linting
+pnpm lint
 ```
-
-5. **Build**
-```bash
-npm run build
-npm start
-```
-
-## API Routes
-
-```typescript
-POST /api/register
-POST /api/submit
-GET /api/projects
-```
-
-## Deployment
-
-Deploy on Vercel:
-
-```bash
-vercel deploy
-```
-
-## Environment Variables on Vercel
-
-Configure the following:
-- `GOOGLE_SERVICE_ACCOUNT_EMAIL`
-- `GOOGLE_PRIVATE_KEY`
-- `GOOGLE_SHEET_ID`
-- `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
-
-## License
-
-MIT License
-
-

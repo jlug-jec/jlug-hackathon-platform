@@ -5,7 +5,6 @@ import Facilities from "./Facilities"
 import Perks from "./Perks"
 import RegistrationDetails from "./RegisterationDetails"
 import FAQ from "./FAQ"
-import Footer from "./Footer"
 import FloatingPaths from "../ui/FloatingPath"
 import AnimatedStarryBackground from "../ui/AnimatedStarryBackground"
 
@@ -24,7 +23,6 @@ export default function MainSection() {
           <Perks />
           <RegistrationDetails />
           <FAQ />
-          <Footer />
         </div>
       </div>
     )
