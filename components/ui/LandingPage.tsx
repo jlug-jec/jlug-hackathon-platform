@@ -63,7 +63,7 @@ export function LandingPage({ title = "CodeKumbh" }: { title?: string }) {
 
       <div className="fixed bottom-6 right-6 space-y-4 z-[999]">
         <motion.a
-          href="https://wa.me/1234567890"
+          href={process.env.NEXT_PUBLIC_WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
           whileHover={{ scale: 1.05 }}
