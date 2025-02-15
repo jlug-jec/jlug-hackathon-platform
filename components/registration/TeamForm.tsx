@@ -6,8 +6,7 @@ import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { InputField } from "../ui/InputField";
 import { MemberFields } from "./MemberFields";
-import { MemberCard } from "./MemberCard";
-
+import {MemberCard} from "./MemberCard"
 type FieldErrors = {
   [K in keyof TeamFormData]?: any;
 } & {
@@ -20,10 +19,39 @@ interface TeamFormProps {
   onValidityChange?: (isValid: boolean) => void;
 }
 
+type Member = {
+  name: string;
+  email: string;
+  phone: string;
+  enrollment: string;
+};
+
 export function TeamForm({ data, onChange, onValidityChange }: TeamFormProps) {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [touched, setTouched] = useState(false);
   const { data: session } = useSession();
+
+  // Function to check for duplicate values across all members
+  const findDuplicates = (members: Member[]) => {
+    const duplicates: { [key: string]: string[] } = {};
+    const fields = ['email', 'phone', 'enrollment'] as const;
+    
+    // Include team leader in duplicate checking
+    const allMembers = [data.teamLeader, ...members];
+    
+    fields.forEach(field => {
+      const values = allMembers.map(m => m[field].toLowerCase().trim());
+      const duplicateValues = values.filter((value, index) => 
+        value && values.indexOf(value) !== index
+      );
+      
+      if (duplicateValues.length > 0) {
+        duplicates[field] = [...new Set(duplicateValues)];
+      }
+    });
+    
+    return duplicates;
+  };
 
   useEffect(() => {
     if (session?.user?.name && session?.user?.email) {
@@ -42,6 +70,36 @@ export function TeamForm({ data, onChange, onValidityChange }: TeamFormProps) {
     setTouched(true);
     try {
       TeamFormSchema.parse(data);
+      
+      // Check for duplicates
+      const duplicates = findDuplicates(data.teamMembers as Member[]);
+      if (Object.keys(duplicates).length > 0) {
+        console.log("here")
+        const fieldErrors: FieldErrors = { teamMembers: [] };
+        
+        // Create error messages for duplicates
+        data.teamMembers.forEach((member, index) => {
+          fieldErrors.teamMembers![index] = {};
+          Object.entries(duplicates).forEach(([field, values]) => {
+            if (values.includes(member[field as keyof Member].toLowerCase().trim())) {
+              fieldErrors.teamMembers![index][field] = `This ${field} is already used by another member`;
+            }
+          });
+        });
+        
+        // Check team leader duplicates
+        Object.entries(duplicates).forEach(([field, values]) => {
+          if (values.includes(data.teamLeader[field as keyof Member].toLowerCase().trim())) {
+            if (!fieldErrors.teamLeader) fieldErrors.teamLeader = {};
+            fieldErrors.teamLeader[field] = `This ${field} is already used by another member`;
+          }
+        });
+        
+        setErrors(fieldErrors);
+        onValidityChange?.(false);
+        return false;
+      }
+      
       setErrors({});
       onValidityChange?.(true);
       return true;
@@ -81,6 +139,11 @@ export function TeamForm({ data, onChange, onValidityChange }: TeamFormProps) {
     current[path[path.length - 1]] = value;
     
     onChange(newData);
+    
+    // Validate on each change to provide immediate feedback
+    if (touched) {
+      validateForm();
+    }
   };
 
   const handleAddMember = () => {
@@ -109,6 +172,7 @@ export function TeamForm({ data, onChange, onValidityChange }: TeamFormProps) {
         e.preventDefault();
         validateForm();
       };
+      
       form.addEventListener('submit', handleSubmit);
       return () => form.removeEventListener('submit', handleSubmit);
     }
