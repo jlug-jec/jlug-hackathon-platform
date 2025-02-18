@@ -9,6 +9,7 @@ import { checkAndCreateTeam } from "@/app/actions/team";
 import { useRouter } from "next/navigation";
 import { TeamFormData } from "@/lib/schemas/team";
 import { TeamResponse } from "@/types";
+import ContactUs from "../home/ContactUs";
 
 
 export type Step = {
@@ -226,6 +227,7 @@ export function RegistrationForm({ steps, initialData }: RegistrationFormProps) 
           </motion.button>
         </motion.div>
       </motion.div>
+      <ContactUs />
     </div>
   );
 }

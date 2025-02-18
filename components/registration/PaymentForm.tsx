@@ -41,12 +41,17 @@ export function PaymentForm({ data, onChange, onValidityChange }: PaymentFormPro
   return (
     <div className="space-y-6">
       <div className="text-center">
+        <h3 className="text-white text-xl font-semibold mb-4">Registration Fee: ₹300</h3>
         <img
           src="/qr-code-placeholder.png"
           alt="Payment QR Code"
           className="mx-auto w-48 h-48 bg-white/10 rounded-lg mb-4"
         />
         <p className="text-white text-sm mb-2">Scan the QR code to make the payment</p>
+        <div className="bg-white/5 rounded-lg p-3 mb-4 mx-auto max-w-xs">
+          <p className="text-white/90 text-sm font-medium">Amount to Pay: ₹300</p>
+          <p className="text-white/70 text-xs mt-1">Please pay the exact amount</p>
+        </div>
         <p className="text-yellow-400 text-sm mb-6 italic">
           Note: Additional charges may apply for food and refreshments on the Hackathon day.
         </p>

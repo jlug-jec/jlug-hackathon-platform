@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import FloatingPaths from "@/components/ui/FloatingPath";
 import AnimatedStarryBackground from "@/components/ui/AnimatedStarryBackground";
+import ContactUs from "@/components/home/ContactUs";
 
 export default function LoginPage() {
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -68,6 +69,8 @@ export default function LoginPage() {
             </>
           )}
         </button>
+
+        <ContactUs/>
       </motion.div>
     </div>
   );
