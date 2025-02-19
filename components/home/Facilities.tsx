@@ -1,6 +1,6 @@
 import { useScroll, useTransform, motion, stagger } from "framer-motion"
 import { useRef } from "react"
-import { facilities } from "@/lib/constants"
+import { facilities } from "../../lib/constants"
 
 export default function Facilities() {
   

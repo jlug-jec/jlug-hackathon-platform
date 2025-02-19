@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "../ui/Button";
 import { useRouter } from "next/navigation";
 import Spotlight from "../ui/Spotlight";
-import { downloadBrochure } from "@/lib/utils";
+import { downloadBrochure } from "../../lib/utils";
 
 export default function HeroSection({title}) {
   const router = useRouter();

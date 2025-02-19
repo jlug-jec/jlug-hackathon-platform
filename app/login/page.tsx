@@ -3,9 +3,9 @@
 import { signIn, useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import FloatingPaths from "@/components/ui/FloatingPath";
-import AnimatedStarryBackground from "@/components/ui/AnimatedStarryBackground";
-import ContactUs from "@/components/home/ContactUs";
+import FloatingPaths from "../../components/ui/FloatingPath";
+import AnimatedStarryBackground from "../../components/ui/AnimatedStarryBackground";
+import ContactUs from "../../components/home/ContactUs";
 
 export default function LoginPage() {
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -27,7 +27,7 @@ export default function LoginPage() {
     setIsSigningIn(true);
     try {
       await signIn("google", {
-        callbackUrl: `${window.location.origin}/register`,
+        callbackUrl: `${window.location.origin}/hackathon`,
         redirect: true
       });
     } catch (error) {

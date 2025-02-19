@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
-import { RegistrationForm } from "@/components/registration/RegistrationForm";
-import { initialData, registrationSteps } from "@/lib/constants";
+import { AnimatedBackground } from "../../components/ui/AnimatedBackground";
+import { RegistrationForm } from "../../components/registration/RegistrationForm";
+import { initialData, registrationSteps } from "../../lib/constants";
 
 export const dynamic = "force-dynamic";
 export default function Home() {

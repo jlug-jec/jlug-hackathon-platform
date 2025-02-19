@@ -1,6 +1,6 @@
 import { useScroll, useTransform, motion, stagger} from "framer-motion"
 import { useRef } from "react"
-import { perks } from "@/lib/constants"
+import { perks } from "../../lib/constants"
 
 export default function Perks() {
   

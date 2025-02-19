@@ -1,4 +1,3 @@
-import { useScroll } from "framer-motion"
 import { useRef } from "react"
 import ParticipationDetails from "./ParticipationDetails"
 import Facilities from "./Facilities"

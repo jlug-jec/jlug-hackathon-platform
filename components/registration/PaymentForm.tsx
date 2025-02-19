@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { toast } from "sonner";
-import { uploadToCloudinary } from '@/lib/cloudinary';
+import { uploadToCloudinary } from '../../lib/cloudinary';
 
 interface PaymentFormProps {
   data: any;

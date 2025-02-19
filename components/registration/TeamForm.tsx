@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { TeamFormSchema, TeamFormData } from "@/lib/schemas/team";
+import { TeamFormSchema, TeamFormData } from "../../lib/schemas/team";
 import { useSession } from "next-auth/react";
 import { z } from "zod";
 import { InputField } from "../ui/InputField";

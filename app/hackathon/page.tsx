@@ -2,8 +2,8 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import FloatingPaths from "@/components/ui/FloatingPath";
-import AnimatedStarryBackground from "@/components/ui/AnimatedStarryBackground";
+import FloatingPaths from "../../components/ui/FloatingPath";
+import AnimatedStarryBackground from "../../components/ui/AnimatedStarryBackground";
 import { FaWhatsapp, FaFileAlt } from "react-icons/fa";
 
 function CountdownTimer() {
@@ -44,6 +44,16 @@ function CountdownTimer() {
   );
 }
 
+function EventStatus() {
+  return (
+    <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-4 text-center my-8">
+      <h2 className="text-2xl font-bold text-green-400 mb-2">Hackathon is Live! 🚀</h2>
+      <p className="text-white/80">The event has started. Good luck to all participants!</p>
+    </div>
+  );
+}
+
+
 export default function HackathonPage() {
   return (
     <div className="relative w-full min-h-screen overflow-hidden bg-black">
@@ -66,7 +76,8 @@ export default function HackathonPage() {
           Welcome to CodeKumbh Hackathon
         </motion.h1>
 
-        <CountdownTimer />
+        {/* <CountdownTimer /> */}
+        <EventStatus/>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

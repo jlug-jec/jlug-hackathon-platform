@@ -1,4 +1,4 @@
-import { MainRegistrationSteps } from "@/lib/constants"
+import { MainRegistrationSteps } from "../../lib/constants"
 import { useScroll, useTransform, motion } from "framer-motion"
 import { useRef } from "react"
 

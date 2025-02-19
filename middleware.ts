@@ -1,11 +1,11 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
-// TODO: FIX middleware instead of SESSION based checks
 export default withAuth(
   function middleware(req) {
     const isAuth = !!req.nextauth.token;
     const isLoginPage = req.nextUrl.pathname.startsWith('/login');
+    const isRegisterPage = req.nextUrl.pathname.startsWith('/register');
     const isApiAuthRoute = req.nextUrl.pathname.startsWith('/api/auth');
 
     console.log('--- Middleware Debug Logs ---');
@@ -18,29 +18,24 @@ export default withAuth(
 
     // Allow authentication API endpoints
     if (isApiAuthRoute) {
-      console.log('→ Allowing API auth route');
       return NextResponse.next();
     }
 
-    // Redirect authenticated users to hackathon page
-    if (isAuth && (isLoginPage)) {
-      console.log('→ Authenticated user trying to access auth pages, redirecting to hackathon');
+    // Redirect authenticated users from login or register to hackathon page
+    if (isAuth && (isLoginPage || isRegisterPage)) {
       return NextResponse.redirect(new URL('/hackathon', req.url));
     }
 
     // Redirect unauthenticated users to login
     if (!isAuth && !isLoginPage) {
-      console.log('→ Unauthenticated user, redirecting to login');
       return NextResponse.redirect(new URL('/login', req.url));
     }
 
-    console.log('→ Allowing request to proceed');
     return NextResponse.next();
   },
   {
     callbacks: {
       authorized: ({ token }) => {
-        console.log('Auth Callback - Token:', token);
         return true;
       },
     },
@@ -50,6 +45,7 @@ export default withAuth(
 export const config = {
   matcher: [
     '/login',
+    '/register',
     '/api/:path*'
   ]
 };

@@ -1,7 +1,7 @@
 import {  useScroll, useTransform, motion} from "framer-motion"
 import { ChevronDown, ChevronUp } from "lucide-react"
 import { useRef, useState } from "react"
-import { faqItems } from "@/lib/constants"
+import { faqItems } from "../../lib/constants"
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)

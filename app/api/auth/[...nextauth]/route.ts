@@ -1,4 +1,4 @@
-import { addUserToFirestore } from "@/lib/firebase/utils";
+import { addUserToFirestore } from "../../../../lib/firebase/utils";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 

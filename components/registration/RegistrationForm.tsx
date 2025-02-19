@@ -5,10 +5,10 @@ import { motion } from "framer-motion";
 import { StepIndicator } from "./StepIndicator";
 import { useSession } from "next-auth/react";
 import { Toaster, toast } from 'sonner';
-import { checkAndCreateTeam } from "@/app/actions/team";
+import { checkAndCreateTeam } from "../../app/actions/team";
 import { useRouter } from "next/navigation";
-import { TeamFormData } from "@/lib/schemas/team";
-import { TeamResponse } from "@/types";
+import { TeamFormData } from "../../lib/schemas/team";
+import { TeamResponse } from "../../types";
 import ContactUs from "../home/ContactUs";
 
 

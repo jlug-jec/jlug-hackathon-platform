@@ -1,6 +1,6 @@
 'use server'
 
-import { checkExistingTeam, createTeam, updateTeam } from "@/lib/firebase/utils";
+import { checkExistingTeam, createTeam, updateTeam } from "../../lib/firebase/utils";
 
 export async function checkAndCreateTeam(email: string, teamData: any) {
   try {
