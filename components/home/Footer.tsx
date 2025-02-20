@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="bg-black text-white py-12 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-black to-black" />
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative ">
         <div className="flex flex-wrap justify-between items-center">
           <div className="w-full md:w-auto mb-6 md:mb-0 flex items-center gap-4">
             <Image 
