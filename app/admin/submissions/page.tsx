@@ -46,7 +46,7 @@ export default function SubmissionsPage() {
       try {
         const result = await getAllSubmissions();
         if (result.success) {
-          setSubmissions(result.submissions);
+        //   setSubmissions(result?.submissions);
         } else {
           toast.error("Failed to fetch submissions");
         }

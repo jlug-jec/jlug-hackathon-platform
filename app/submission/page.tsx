@@ -30,7 +30,7 @@ export default function SubmissionPage() {
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   
-  const problemStatementRef = useRef<HTMLTextAreaElement>(null);
+  const problemStatementRef = useRef<HTMLSelectElement>(null);
   const ideationRef = useRef<HTMLTextAreaElement>(null);
   const problemsFacedRef = useRef<HTMLTextAreaElement>(null);
   const videoUrlRef = useRef<HTMLInputElement>(null);
