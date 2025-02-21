@@ -7,7 +7,7 @@ import { uploadToCloudinary } from "../../lib/cloudinary";
 interface SubmissionData {
   problemStatement: string;
   ideation: string;
-  problemsFaced: string;
+  problemsFaced?: string; // Made optional with '?'
   videoUrl: string;
   screenshots: File[];
   teamName: string;
@@ -36,7 +36,7 @@ export async function submitProject(data: SubmissionData) {
     const submission = {
       problemStatement: data.problemStatement,
       ideation: data.ideation,
-      problemsFaced: data.problemsFaced,
+      problemsFaced: data.problemsFaced || "", // Made optional with fallback to empty string
       videoUrl: data.videoUrl,
       teamName: data.teamName,
       teamLeaderEmail: data.teamLeaderEmail,

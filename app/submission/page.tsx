@@ -234,12 +234,12 @@ export default function SubmissionPage() {
           </div>
           
           <div className="space-y-2">
-            <label className="text-lg font-medium text-white/70">Problems Faced</label>
+            <label className="text-lg font-medium text-white/70">Presentation link</label>
             <Textarea 
               ref={problemsFacedRef}
-              placeholder="What challenges did you encounter?"
+              placeholder="presentation link (if exist and should be public)?"
               className="min-h-[100px] bg-white/5 border-white/10 text-white"
-              required
+
             />
           </div>
           
