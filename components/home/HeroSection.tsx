@@ -66,7 +66,7 @@ export default function HeroSection({title}) {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <Button
+              {/* <Button
                 variant="ghost"
                 className="rounded-xl px-8 py-4 text-lg font-semibold backdrop-blur-md 
                           bg-white/10 hover:bg-white/20 text-white hover:text-slate-200 transition-all duration-300 
@@ -75,6 +75,17 @@ export default function HeroSection({title}) {
                 onClick={() => router.push("/login")}
               >
                 Register Now
+                <span className="ml-2">→</span>
+              </Button> */}
+              <Button
+                variant="ghost"
+                className="rounded-xl px-8 py-4 text-lg font-semibold backdrop-blur-md 
+                          bg-white/10 hover:bg-white/20 text-white hover:text-slate-200 transition-all duration-300 
+                          border border-white/20 hover:border-white/40
+                          hover:shadow-[0_0_30px_-12px_rgba(255,255,255,0.4)]"
+                onClick={() => router.push("/projects")}
+              >
+                 View Projects
                 <span className="ml-2">→</span>
               </Button>
 

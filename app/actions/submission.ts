@@ -3,11 +3,12 @@
 import { db } from "../../lib/firebase";
 import { collection, addDoc, serverTimestamp, getDocs } from "firebase/firestore";
 import { uploadToCloudinary } from "../../lib/cloudinary";
+import { Submission } from "@/types";
 
 interface SubmissionData {
   problemStatement: string;
   ideation: string;
-  problemsFaced?: string; // Made optional with '?'
+  problemsFaced?: string; 
   videoUrl: string;
   screenshots: File[];
   teamName: string;
@@ -36,7 +37,7 @@ export async function submitProject(data: SubmissionData) {
     const submission = {
       problemStatement: data.problemStatement,
       ideation: data.ideation,
-      problemsFaced: data.problemsFaced || "", // Made optional with fallback to empty string
+      problemsFaced: data.problemsFaced || "", 
       videoUrl: data.videoUrl,
       teamName: data.teamName,
       teamLeaderEmail: data.teamLeaderEmail,
@@ -68,12 +69,23 @@ export async function getAllSubmissions() {
     const submissionsRef = collection(db, "submissions");
     const querySnapshot = await getDocs(submissionsRef);
     
-    const submissions = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate().toISOString(),
-      updatedAt: doc.data().updatedAt?.toDate().toISOString(),
-    }));
+    const submissions: Submission[] = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        problemStatement: data.problemStatement,
+        ideation: data.ideation,
+        problemsFaced: data.problemsFaced || "",
+        videoUrl: data.videoUrl,
+        screenshots: data.screenshots || [],
+        teamName: data.teamName,
+        teamLeaderEmail: data.teamLeaderEmail,
+        githubLink: data.githubLink,
+        createdAt: data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+        updatedAt: data.updatedAt?.toDate().toISOString() || new Date().toISOString(),
+        status: data.status || "submitted",
+      };
+    });
 
     return {
       success: true,

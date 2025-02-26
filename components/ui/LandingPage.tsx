@@ -12,6 +12,13 @@ import HeroSection from "../home/HeroSection";
 export function LandingPage({ title = "CodeKumbh" }: { title?: string }) {
   return (
     <div className="relative bg-black">
+      {/* Event Status Banner */}
+      <div className="bg-gradient-to-r from-red-500/20 via-red-900/20 to-red-500/20 border-b border-red-500/20 py-2">
+        <p className="text-center text-red-400 font-medium">
+          ⚠️ This event has concluded. Thank you for your interest!
+        </p>
+      </div>
+
       <div className="relative min-h-screen w-full flex flex-col items-center justify-center">
         <StarryBackground />
         <div className="absolute inset-0">
@@ -60,7 +67,7 @@ export function LandingPage({ title = "CodeKumbh" }: { title?: string }) {
         <MainSection />
       </motion.div>
 
-      <div className="fixed bottom-6 right-6 space-y-4 z-[999]">
+      {/* <div className="fixed bottom-6 right-6 space-y-4 z-[999]">
         <motion.a
           href={process.env.NEXT_PUBLIC_WHATSAPP_URL}
           target="_blank"
@@ -77,7 +84,7 @@ export function LandingPage({ title = "CodeKumbh" }: { title?: string }) {
         >
           <FaWhatsapp className="mr-2 text-xl text-purple-300" /> WhatsApp
         </motion.a>
-      </div>
+      </div> */}
     </div>
   );
 }

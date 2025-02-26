@@ -1,3 +1,5 @@
+"use client"
+
 export  default function AnimatedStarryBackground() {
     return (
       <div className="absolute inset-0 overflow-hidden">

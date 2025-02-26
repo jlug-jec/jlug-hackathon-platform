@@ -1,4 +1,5 @@
-  // Add this new component after the imports
+"use client"
+
   export default function StarryBackground() {
     return (
       <div className="absolute inset-0 overflow-hidden">

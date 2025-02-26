@@ -41,3 +41,18 @@ export interface TeamResponse {
   message: string;
   team: TeamFormData & DocumentData;
 }
+
+
+export interface Submission {
+  id: string;
+  teamName: string;
+  teamLeaderEmail: string;
+  githubLink: string;
+  videoUrl: string;
+  problemStatement: string;
+  ideation: string;
+  problemsFaced: string;
+  screenshots: string[];
+  status: string;
+  createdAt: string;
+}
