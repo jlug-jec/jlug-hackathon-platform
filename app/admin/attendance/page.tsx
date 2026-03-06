@@ -17,8 +17,10 @@ export default async function AdminAttendancePage() {
       <Navbar />
       <AttendanceScanner
         initialTotalTeams={dashboard.totalTeams}
-        initialAttendedTeams={dashboard.attendedTeams}
-        initialPendingTeams={dashboard.pendingTeams}
+        initialDay1AttendedTeams={dashboard.day1AttendedTeams}
+        initialDay1PendingTeams={dashboard.day1PendingTeams}
+        initialDay2AttendedTeams={dashboard.day2AttendedTeams}
+        initialDay2PendingTeams={dashboard.day2PendingTeams}
         initialRecentEntries={dashboard.recentEntries}
         initialTeamOverview={dashboard.teamOverview}
         adminUsername={session.username}

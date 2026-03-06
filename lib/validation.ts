@@ -1,18 +1,19 @@
 import { z } from "zod"
 
 export const departmentOptions = [
-  "Computer Science",
+  "Computer Science Engineering",
   "Information Technology",
-  "Electronics and Communication",
-  "Electrical",
-  "Mechanical",
-  "Civil",
-  "Chemical",
-  "Biotechnology",
-  "Other",
+  "Artificial Intelligence and Data Science",
+  "Mechatronics",
+  "Electronics and Telecommunication Engineering",
+  "Electrical Engineering",
+  "Mechanical Engineering",
+  "Civil Engineering",
+  "Industrial and Production Engineering",
 ] as const
 
 export const yearOptions = ["1st Year", "2nd Year", "3rd Year", "4th Year"] as const
+export const genderOptions = ["Male", "Female"] as const
 
 const phoneRegex = /^[6-9]\d{9}$/
 const teamCodeRegex = /^CK26-[A-Z0-9]{6}$/
@@ -33,6 +34,13 @@ export const memberSchema = z.object({
     .regex(phoneRegex, "Enter a valid 10-digit phone number."),
   department: requiredText(120),
   year: requiredText(40),
+  gender: z
+    .string()
+    .trim()
+    .refine(
+      (value) => genderOptions.includes(value as (typeof genderOptions)[number]),
+      "Please select a valid gender.",
+    ),
 })
 
 const teamCoreSchema = z.object({
@@ -45,7 +53,7 @@ const teamCoreSchema = z.object({
   members: z
     .array(memberSchema)
     .min(2, "At least 2 members are required (3 including leader).")
-    .max(5, "Maximum 5 members are allowed here (6 including leader)."),
+    .max(4, "Maximum 4 members are allowed here (5 including leader)."),
 })
 
 export const paymentSchema = z.object({
@@ -122,6 +130,9 @@ export const attendanceMarkSchema = z.object({
     .trim()
     .min(1, "QR value is required.")
     .max(2048, "Invalid QR value."),
+  day: z.enum(["day1", "day2"], {
+    errorMap: () => ({ message: "Select attendance day." }),
+  }),
 })
 
 export type MemberInput = z.infer<typeof memberSchema>
@@ -130,17 +141,20 @@ export type PaymentInput = z.infer<typeof paymentSchema>
 export type RegistrationInput = z.infer<typeof registrationSchema>
 export type SubmissionInput = z.infer<typeof submissionSchema>
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>
+export type AttendanceDay = z.infer<typeof attendanceMarkSchema>["day"]
 
 function validateUniqueParticipants(
   data: {
-    leader: { email: string; phone: string }
-    members: Array<{ email: string; phone: string }>
+    leader: { email: string; phone: string; gender: string }
+    members: Array<{ email: string; phone: string; gender: string }>
   },
   ctx: z.RefinementCtx,
 ) {
   const allMembers = [data.leader, ...data.members]
   const emailSet = new Set<string>()
   const phoneSet = new Set<string>()
+  let hasMale = false
+  let hasFemale = false
 
   for (const [index, participant] of allMembers.entries()) {
     const emailKey = participant.email.toLowerCase()
@@ -161,5 +175,17 @@ function validateUniqueParticipants(
       })
     }
     phoneSet.add(participant.phone)
+
+    const normalizedGender = participant.gender.toLowerCase()
+    if (normalizedGender === "male") hasMale = true
+    if (normalizedGender === "female") hasFemale = true
+  }
+
+  if (!hasMale || !hasFemale) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Team must include at least one boy and at least one girl.",
+      path: ["members"],
+    })
   }
 }

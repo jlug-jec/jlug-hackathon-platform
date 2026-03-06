@@ -5,7 +5,7 @@ const steps = [
     icon: ClipboardList,
     title: "1. Team Registration",
     description:
-      "Register with team name, leader details, and 2-5 member details (3-6 total participants).",
+      "Register with team name, leader details, and 2-4 member details (3-5 total participants).",
   },
   {
     icon: CircleDollarSign,
@@ -23,7 +23,7 @@ const steps = [
     icon: UserCheck,
     title: "4. Entry Attendance",
     description:
-      "At venue entry, admin scans your team QR and attendance gets marked automatically in dashboard.",
+      "At venue entry, admins scan your team QR and mark attendance.",
   },
   {
     icon: Send,
@@ -34,7 +34,8 @@ const steps = [
 ]
 
 const rules = [
-  "Team size must be between 3 and 6 members.",
+  "Team size must be between 3 and 5 members.",
+  "Every team must include at least one boy and at least one girl.",
   "Each team must have exactly one team leader.",
   "Registration is confirmed only after payment details are submitted.",
   "Bring valid student ID for all participants at entry.",

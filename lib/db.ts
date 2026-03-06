@@ -5,7 +5,7 @@ import postgres, { type Sql } from "postgres"
 
 import { parseAttendancePayload } from "@/lib/attendance"
 import { AppError } from "@/lib/errors"
-import type { RegistrationInput, SubmissionInput } from "@/lib/validation"
+import type { AttendanceDay, RegistrationInput, SubmissionInput } from "@/lib/validation"
 
 type DatabaseTeamRow = {
   id: string
@@ -16,6 +16,10 @@ type DatabaseTeamRow = {
   payment_submitted_at: Date | string
   attendance_marked_at: Date | string | null
   attendance_marked_by: string | null
+  attendance_day1_marked_at: Date | string | null
+  attendance_day1_marked_by: string | null
+  attendance_day2_marked_at: Date | string | null
+  attendance_day2_marked_by: string | null
   created_at: Date | string
 }
 
@@ -27,6 +31,7 @@ type DatabaseMemberRow = {
   phone: string
   department: string
   year: string
+  gender: string
 }
 
 type DatabaseSubmissionRow = {
@@ -46,6 +51,7 @@ export type TeamMember = {
   phone: string
   department: string
   year: string
+  gender: string
 }
 
 export type TeamSubmission = {
@@ -66,6 +72,10 @@ export type TeamCardData = {
   paymentSubmittedAt: string
   attendanceMarkedAt: string | null
   attendanceMarkedBy: string | null
+  attendanceDay1MarkedAt: string | null
+  attendanceDay1MarkedBy: string | null
+  attendanceDay2MarkedAt: string | null
+  attendanceDay2MarkedBy: string | null
   createdAt: string
   members: TeamMember[]
   submission: TeamSubmission | null
@@ -84,11 +94,14 @@ export type PublicSubmission = {
 
 export type AttendanceDashboardData = {
   totalTeams: number
-  attendedTeams: number
-  pendingTeams: number
+  day1AttendedTeams: number
+  day1PendingTeams: number
+  day2AttendedTeams: number
+  day2PendingTeams: number
   recentEntries: Array<{
     teamCode: string
     teamName: string
+    day: AttendanceDay
     markedAt: string
     markedBy: string | null
   }>
@@ -97,12 +110,19 @@ export type AttendanceDashboardData = {
     teamName: string
     memberCount: number
     paymentStatus: string
-    attendanceMarkedAt: string | null
+    attendanceDay1MarkedAt: string | null
+    attendanceDay2MarkedAt: string | null
+    hasSubmission: boolean
+    submissionUpdatedAt: string | null
+    githubUrl: string | null
+    videoUrl: string | null
+    presentationUrl: string | null
     createdAt: string
   }>
 }
 
 export type AttendanceMarkResult = {
+  day: AttendanceDay
   teamCode: string
   teamName: string
   memberCount: number
@@ -172,6 +192,10 @@ async function initializeSchema(): Promise<void> {
       payment_submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       attendance_marked_at TIMESTAMPTZ,
       attendance_marked_by VARCHAR(120),
+      attendance_day1_marked_at TIMESTAMPTZ,
+      attendance_day1_marked_by VARCHAR(120),
+      attendance_day2_marked_at TIMESTAMPTZ,
+      attendance_day2_marked_by VARCHAR(120),
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
@@ -188,6 +212,34 @@ async function initializeSchema(): Promise<void> {
   `
 
   await sql`
+    ALTER TABLE teams
+    ADD COLUMN IF NOT EXISTS attendance_day1_marked_at TIMESTAMPTZ;
+  `
+
+  await sql`
+    ALTER TABLE teams
+    ADD COLUMN IF NOT EXISTS attendance_day1_marked_by VARCHAR(120);
+  `
+
+  await sql`
+    ALTER TABLE teams
+    ADD COLUMN IF NOT EXISTS attendance_day2_marked_at TIMESTAMPTZ;
+  `
+
+  await sql`
+    ALTER TABLE teams
+    ADD COLUMN IF NOT EXISTS attendance_day2_marked_by VARCHAR(120);
+  `
+
+  await sql`
+    UPDATE teams
+    SET
+      attendance_day1_marked_at = COALESCE(attendance_day1_marked_at, attendance_marked_at),
+      attendance_day1_marked_by = COALESCE(attendance_day1_marked_by, attendance_marked_by)
+    WHERE attendance_marked_at IS NOT NULL
+  `
+
+  await sql`
     CREATE TABLE IF NOT EXISTS team_members (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       team_id UUID NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
@@ -197,10 +249,32 @@ async function initializeSchema(): Promise<void> {
       phone VARCHAR(24) NOT NULL,
       department VARCHAR(120) NOT NULL,
       year VARCHAR(40) NOT NULL,
+      gender VARCHAR(16) NOT NULL,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       UNIQUE(team_id, email),
       UNIQUE(team_id, phone)
     );
+  `
+
+  await sql`
+    ALTER TABLE team_members
+    ADD COLUMN IF NOT EXISTS gender VARCHAR(16);
+  `
+
+  await sql`
+    UPDATE team_members
+    SET gender = 'Male'
+    WHERE gender IS NULL;
+  `
+
+  await sql`
+    ALTER TABLE team_members
+    ALTER COLUMN gender SET DEFAULT 'Male';
+  `
+
+  await sql`
+    ALTER TABLE team_members
+    ALTER COLUMN gender SET NOT NULL;
   `
 
   await sql`
@@ -266,7 +340,20 @@ export async function createTeamRegistration(input: RegistrationInput) {
             NOW(),
             NOW()
           )
-          RETURNING id, team_code, team_name, attendance_token, payment_status, payment_submitted_at, attendance_marked_at, attendance_marked_by, created_at
+          RETURNING
+            id,
+            team_code,
+            team_name,
+            attendance_token,
+            payment_status,
+            payment_submitted_at,
+            attendance_marked_at,
+            attendance_marked_by,
+            attendance_day1_marked_at,
+            attendance_day1_marked_by,
+            attendance_day2_marked_at,
+            attendance_day2_marked_by,
+            created_at
         `
 
         const participantRows = [
@@ -278,6 +365,7 @@ export async function createTeamRegistration(input: RegistrationInput) {
             phone: input.leader.phone.trim(),
             department: input.leader.department.trim(),
             year: input.leader.year.trim(),
+            gender: input.leader.gender.trim(),
           },
           ...input.members.map((member) => ({
             team_id: team.id,
@@ -287,6 +375,7 @@ export async function createTeamRegistration(input: RegistrationInput) {
             phone: member.phone.trim(),
             department: member.department.trim(),
             year: member.year.trim(),
+            gender: member.gender.trim(),
           })),
         ]
 
@@ -300,6 +389,7 @@ export async function createTeamRegistration(input: RegistrationInput) {
             "phone",
             "department",
             "year",
+            "gender",
           )}
         `
 
@@ -342,6 +432,10 @@ export async function getTeamCardByCode(teamCode: string): Promise<TeamCardData 
       payment_submitted_at,
       attendance_marked_at,
       attendance_marked_by,
+      attendance_day1_marked_at,
+      attendance_day1_marked_by,
+      attendance_day2_marked_at,
+      attendance_day2_marked_by,
       created_at
     FROM teams
     WHERE team_code = ${normalizedCode}
@@ -353,7 +447,7 @@ export async function getTeamCardByCode(teamCode: string): Promise<TeamCardData 
   }
 
   const members = await sql<DatabaseMemberRow[]>`
-    SELECT id, role, full_name, email, phone, department, year
+    SELECT id, role, full_name, email, phone, department, year, gender
     FROM team_members
     WHERE team_id = ${team.id}
     ORDER BY CASE WHEN role = 'leader' THEN 0 ELSE 1 END, full_name ASC
@@ -375,6 +469,10 @@ export async function getTeamCardByCode(teamCode: string): Promise<TeamCardData 
     paymentSubmittedAt: toIso(team.payment_submitted_at),
     attendanceMarkedAt: toIsoNullable(team.attendance_marked_at),
     attendanceMarkedBy: team.attendance_marked_by,
+    attendanceDay1MarkedAt: toIsoNullable(team.attendance_day1_marked_at),
+    attendanceDay1MarkedBy: team.attendance_day1_marked_by,
+    attendanceDay2MarkedAt: toIsoNullable(team.attendance_day2_marked_at),
+    attendanceDay2MarkedBy: team.attendance_day2_marked_by,
     createdAt: toIso(team.created_at),
     members: members.map((member) => ({
       id: member.id,
@@ -384,6 +482,7 @@ export async function getTeamCardByCode(teamCode: string): Promise<TeamCardData 
       phone: member.phone,
       department: member.department,
       year: member.year,
+      gender: member.gender,
     })),
     submission: submission ? mapSubmissionRow(submission) : null,
   }
@@ -401,6 +500,10 @@ export async function getTeamByAttendanceToken(token: string) {
       payment_submitted_at,
       attendance_marked_at,
       attendance_marked_by,
+      attendance_day1_marked_at,
+      attendance_day1_marked_by,
+      attendance_day2_marked_at,
+      attendance_day2_marked_by,
       created_at
     FROM teams
     WHERE attendance_token = ${token.trim().toLowerCase()}
@@ -420,6 +523,8 @@ export async function getTeamByAttendanceToken(token: string) {
     teamName: team.team_name,
     memberCount: memberCount?.member_count ?? 0,
     attendanceMarkedAt: toIsoNullable(team.attendance_marked_at),
+    attendanceDay1MarkedAt: toIsoNullable(team.attendance_day1_marked_at),
+    attendanceDay2MarkedAt: toIsoNullable(team.attendance_day2_marked_at),
   }
 }
 
@@ -533,10 +638,13 @@ export async function getPublicSubmissions(): Promise<PublicSubmission[]> {
 export async function getAttendanceDashboardData(): Promise<AttendanceDashboardData> {
   const sql = await ensureDatabaseReady()
 
-  const [summary] = await sql<{ total_teams: number; attended_teams: number }[]>`
+  const [summary] = await sql<
+    { total_teams: number; day1_attended_teams: number; day2_attended_teams: number }[]
+  >`
     SELECT
       COUNT(*)::int AS total_teams,
-      COUNT(attendance_marked_at)::int AS attended_teams
+      COUNT(attendance_day1_marked_at)::int AS day1_attended_teams,
+      COUNT(attendance_day2_marked_at)::int AS day2_attended_teams
     FROM teams
   `
 
@@ -544,18 +652,39 @@ export async function getAttendanceDashboardData(): Promise<AttendanceDashboardD
     Array<{
       team_code: string
       team_name: string
-      attendance_marked_at: Date | string
-      attendance_marked_by: string | null
+      marked_day: AttendanceDay
+      marked_at: Date | string
+      marked_by: string | null
     }>
   >`
     SELECT
       team_code,
       team_name,
-      attendance_marked_at,
-      attendance_marked_by
-    FROM teams
-    WHERE attendance_marked_at IS NOT NULL
-    ORDER BY attendance_marked_at DESC
+      marked_day,
+      marked_at,
+      marked_by
+    FROM (
+      SELECT
+        team_code,
+        team_name,
+        'day1'::text AS marked_day,
+        attendance_day1_marked_at AS marked_at,
+        attendance_day1_marked_by AS marked_by
+      FROM teams
+      WHERE attendance_day1_marked_at IS NOT NULL
+
+      UNION ALL
+
+      SELECT
+        team_code,
+        team_name,
+        'day2'::text AS marked_day,
+        attendance_day2_marked_at AS marked_at,
+        attendance_day2_marked_by AS marked_by
+      FROM teams
+      WHERE attendance_day2_marked_at IS NOT NULL
+    ) attendance_events
+    ORDER BY marked_at DESC
     LIMIT 20
   `
 
@@ -564,44 +693,70 @@ export async function getAttendanceDashboardData(): Promise<AttendanceDashboardD
       team_code: string
       team_name: string
       payment_status: string
-      attendance_marked_at: Date | string | null
+      attendance_day1_marked_at: Date | string | null
+      attendance_day2_marked_at: Date | string | null
       created_at: Date | string
       member_count: number
+      github_url: string | null
+      video_url: string | null
+      presentation_url: string | null
+      submission_updated_at: Date | string | null
     }>
   >`
     SELECT
       t.team_code,
       t.team_name,
       t.payment_status,
-      t.attendance_marked_at,
+      t.attendance_day1_marked_at,
+      t.attendance_day2_marked_at,
       t.created_at,
-      COUNT(m.id)::int AS member_count
+      COUNT(m.id)::int AS member_count,
+      s.github_url,
+      s.video_url,
+      s.presentation_url,
+      s.updated_at AS submission_updated_at
     FROM teams t
     LEFT JOIN team_members m ON m.team_id = t.id
-    GROUP BY t.id
+    LEFT JOIN submissions s ON s.team_id = t.id
+    GROUP BY
+      t.id,
+      s.github_url,
+      s.video_url,
+      s.presentation_url,
+      s.updated_at
     ORDER BY t.created_at DESC
     LIMIT 300
   `
 
   const totalTeams = summary?.total_teams ?? 0
-  const attendedTeams = summary?.attended_teams ?? 0
+  const day1AttendedTeams = summary?.day1_attended_teams ?? 0
+  const day2AttendedTeams = summary?.day2_attended_teams ?? 0
 
   return {
     totalTeams,
-    attendedTeams,
-    pendingTeams: totalTeams - attendedTeams,
+    day1AttendedTeams,
+    day1PendingTeams: totalTeams - day1AttendedTeams,
+    day2AttendedTeams,
+    day2PendingTeams: totalTeams - day2AttendedTeams,
     recentEntries: recentEntries.map((row) => ({
       teamCode: row.team_code,
       teamName: row.team_name,
-      markedAt: toIso(row.attendance_marked_at),
-      markedBy: row.attendance_marked_by,
+      day: row.marked_day,
+      markedAt: toIso(row.marked_at),
+      markedBy: row.marked_by,
     })),
     teamOverview: teamOverview.map((row) => ({
       teamCode: row.team_code,
       teamName: row.team_name,
       memberCount: row.member_count,
       paymentStatus: row.payment_status,
-      attendanceMarkedAt: toIsoNullable(row.attendance_marked_at),
+      attendanceDay1MarkedAt: toIsoNullable(row.attendance_day1_marked_at),
+      attendanceDay2MarkedAt: toIsoNullable(row.attendance_day2_marked_at),
+      hasSubmission: Boolean(row.github_url && row.video_url),
+      submissionUpdatedAt: toIsoNullable(row.submission_updated_at),
+      githubUrl: row.github_url,
+      videoUrl: row.video_url,
+      presentationUrl: row.presentation_url,
       createdAt: toIso(row.created_at),
     })),
   }
@@ -610,6 +765,7 @@ export async function getAttendanceDashboardData(): Promise<AttendanceDashboardD
 export async function markAttendanceFromPayload(
   payload: string,
   markedBy: string,
+  day: AttendanceDay,
 ): Promise<AttendanceMarkResult> {
   const sql = await ensureDatabaseReady()
   const lookup = parseAttendancePayload(payload)
@@ -630,6 +786,10 @@ export async function markAttendanceFromPayload(
             payment_submitted_at,
             attendance_marked_at,
             attendance_marked_by,
+            attendance_day1_marked_at,
+            attendance_day1_marked_by,
+            attendance_day2_marked_at,
+            attendance_day2_marked_by,
             created_at
           FROM teams
           WHERE attendance_token = ${lookup.value}
@@ -645,6 +805,10 @@ export async function markAttendanceFromPayload(
             payment_submitted_at,
             attendance_marked_at,
             attendance_marked_by,
+            attendance_day1_marked_at,
+            attendance_day1_marked_by,
+            attendance_day2_marked_at,
+            attendance_day2_marked_by,
             created_at
           FROM teams
           WHERE team_code = ${lookup.value}
@@ -661,57 +825,136 @@ export async function markAttendanceFromPayload(
     WHERE team_id = ${team.id}
   `
 
-  if (team.attendance_marked_at) {
+  const selectedMarkedAt =
+    day === "day1" ? team.attendance_day1_marked_at : team.attendance_day2_marked_at
+  const selectedMarkedBy =
+    day === "day1" ? team.attendance_day1_marked_by : team.attendance_day2_marked_by
+
+  if (selectedMarkedAt) {
     return {
+      day,
       teamCode: team.team_code,
       teamName: team.team_name,
       memberCount: memberCount?.member_count ?? 0,
       alreadyMarked: true,
-      markedAt: toIso(team.attendance_marked_at),
-      markedBy: team.attendance_marked_by,
+      markedAt: toIso(selectedMarkedAt),
+      markedBy: selectedMarkedBy,
     }
   }
 
-  const [updated] = await sql<{ attendance_marked_at: Date | string; attendance_marked_by: string | null }[]>`
+  const normalizedMarker = markedBy.trim().toLowerCase()
+  if (day === "day1") {
+    const [updated] = await sql<
+      {
+        attendance_day1_marked_at: Date | string
+        attendance_day1_marked_by: string | null
+      }[]
+    >`
+      UPDATE teams
+      SET
+        attendance_day1_marked_at = NOW(),
+        attendance_day1_marked_by = ${normalizedMarker},
+        attendance_marked_at = COALESCE(attendance_marked_at, NOW()),
+        attendance_marked_by = COALESCE(attendance_marked_by, ${normalizedMarker}),
+        updated_at = NOW()
+      WHERE id = ${team.id}
+        AND attendance_day1_marked_at IS NULL
+      RETURNING attendance_day1_marked_at, attendance_day1_marked_by
+    `
+
+    if (!updated) {
+      const [latest] = await sql<
+        {
+          attendance_day1_marked_at: Date | string | null
+          attendance_day1_marked_by: string | null
+        }[]
+      >`
+        SELECT attendance_day1_marked_at, attendance_day1_marked_by
+        FROM teams
+        WHERE id = ${team.id}
+        LIMIT 1
+      `
+
+      if (!latest?.attendance_day1_marked_at) {
+        throw new AppError("Attendance could not be marked. Please retry.", 500)
+      }
+
+      return {
+        day,
+        teamCode: team.team_code,
+        teamName: team.team_name,
+        memberCount: memberCount?.member_count ?? 0,
+        alreadyMarked: true,
+        markedAt: toIso(latest.attendance_day1_marked_at),
+        markedBy: latest.attendance_day1_marked_by,
+      }
+    }
+
+    return {
+      day,
+      teamCode: team.team_code,
+      teamName: team.team_name,
+      memberCount: memberCount?.member_count ?? 0,
+      alreadyMarked: false,
+      markedAt: toIso(updated.attendance_day1_marked_at),
+      markedBy: updated.attendance_day1_marked_by,
+    }
+  }
+
+  const [updated] = await sql<
+    {
+      attendance_day2_marked_at: Date | string
+      attendance_day2_marked_by: string | null
+    }[]
+  >`
     UPDATE teams
     SET
-      attendance_marked_at = NOW(),
-      attendance_marked_by = ${markedBy.trim().toLowerCase()},
+      attendance_day2_marked_at = NOW(),
+      attendance_day2_marked_by = ${normalizedMarker},
+      attendance_marked_at = COALESCE(attendance_marked_at, NOW()),
+      attendance_marked_by = COALESCE(attendance_marked_by, ${normalizedMarker}),
       updated_at = NOW()
     WHERE id = ${team.id}
-      AND attendance_marked_at IS NULL
-    RETURNING attendance_marked_at, attendance_marked_by
+      AND attendance_day2_marked_at IS NULL
+    RETURNING attendance_day2_marked_at, attendance_day2_marked_by
   `
 
   if (!updated) {
-    const [latest] = await sql<{ attendance_marked_at: Date | string; attendance_marked_by: string | null }[]>`
-      SELECT attendance_marked_at, attendance_marked_by
+    const [latest] = await sql<
+      {
+        attendance_day2_marked_at: Date | string | null
+        attendance_day2_marked_by: string | null
+      }[]
+    >`
+      SELECT attendance_day2_marked_at, attendance_day2_marked_by
       FROM teams
       WHERE id = ${team.id}
       LIMIT 1
     `
 
-    if (!latest?.attendance_marked_at) {
+    if (!latest?.attendance_day2_marked_at) {
       throw new AppError("Attendance could not be marked. Please retry.", 500)
     }
 
     return {
+      day,
       teamCode: team.team_code,
       teamName: team.team_name,
       memberCount: memberCount?.member_count ?? 0,
       alreadyMarked: true,
-      markedAt: toIso(latest.attendance_marked_at),
-      markedBy: latest.attendance_marked_by,
+      markedAt: toIso(latest.attendance_day2_marked_at),
+      markedBy: latest.attendance_day2_marked_by,
     }
   }
 
   return {
+    day,
     teamCode: team.team_code,
     teamName: team.team_name,
     memberCount: memberCount?.member_count ?? 0,
     alreadyMarked: false,
-    markedAt: toIso(updated.attendance_marked_at),
-    markedBy: updated.attendance_marked_by,
+    markedAt: toIso(updated.attendance_day2_marked_at),
+    markedBy: updated.attendance_day2_marked_by,
   }
 }
 

@@ -1,45 +1,77 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Clock, Flag, Rocket, PartyPopper, Code, Presentation } from "lucide-react"
+import { Clock3, Compass, Sparkles, Swords } from "lucide-react"
 
-const timeline = [
+type TimelineItem = {
+  time: string
+  title: string
+  description?: string
+}
+
+const phases = [
   {
-    icon: Flag,
-    time: "Day 1 - 9:00 AM",
-    title: "Opening Ceremony",
-    description: "Kick-off, team registration, rules and theme reveal.",
+    icon: Compass,
+    title: "Phase 1: Prarambh (The Beginning)",
+    description:
+      "Problem statements open, teams align strategy, and mentors help shape the approach.",
   },
   {
-    icon: Code,
-    time: "Day 1 - 10:00 AM",
-    title: "Hacking Begins",
-    description: "Start building! Mentors available for guidance.",
+    icon: Sparkles,
+    title: "Phase 2: Vichar Manthan (The Ideation)",
+    description:
+      "Core building sprint with coding, troubleshooting, and guided innovation throughout the day.",
   },
   {
-    icon: Clock,
-    time: "Day 1 - 8:00 PM",
-    title: "Checkpoint 1",
-    description: "Progress review and dinner break.",
+    icon: Swords,
+    title: "Phase 3: Mahasangram (The Final Battle)",
+    description:
+      "Submission, judging, and final presentation of the best solutions before felicitation.",
+  },
+]
+
+const dayOneTimeline: TimelineItem[] = [
+  { time: "8:30 AM", title: "Team Arrival" },
+  {
+    time: "9:30 AM",
+    title: "Registration Desk Opens",
+    description: "Food coupon desk (Rs 100), team ID distribution, attendance check 1.",
   },
   {
-    icon: Rocket,
-    time: "Day 2 - 10:00 AM",
-    title: "Checkpoint 2",
-    description: "Mid-hackathon review and mentor sessions.",
+    time: "10:00 AM onward",
+    title: "Opening + Hackathon Kickoff",
+    description:
+      "Saraswati vandana, faculty welcome, addresses, rule briefing, and club intro followed by start.",
   },
   {
-    icon: Presentation,
-    time: "Day 2 - 4:00 PM",
-    title: "Submissions Close",
-    description: "Final code push. Prepare your presentations.",
+    time: "During event",
+    title: "Twist Reveals and Sprint",
+    description: "Twists announced via PPT while hacking continues.",
   },
   {
-    icon: PartyPopper,
-    time: "Day 2 - 6:00 PM",
-    title: "Demos & Awards",
-    description: "Team presentations, judging, and prize distribution.",
+    time: "Midday",
+    title: "Lunch (Paid) + Quiz Slot",
+    description: "Quiz will be conducted whenever feasible.",
   },
+  {
+    time: "Later in day",
+    title: "Coverage + Attendance Check 2",
+    description: "News paper article and photo coverage, followed by second attendance checkpoint.",
+  },
+  {
+    time: "Evening",
+    title: "Sponsor Slot + Snacks",
+    description: "Sponsored segment and food before day wrap-up.",
+  },
+]
+
+const dayTwoTimeline: TimelineItem[] = [
+  { time: "8:30 AM", title: "Team Arrival" },
+  { time: "10:00 AM", title: "Day 2 Restart + Attendance Check" },
+  { time: "12:00 PM - 1:00 PM", title: "Submission Window" },
+  { time: "After submission", title: "Lunch / Tea" },
+  { time: "Post lunch", title: "Judging Round + Evaluation" },
+  { time: "Final slot", title: "Felicitation" },
 ]
 
 export function TimelineSection() {
@@ -73,42 +105,80 @@ export function TimelineSection() {
           </h2>
         </div>
 
-        <div className="relative mt-16">
-          {/* Central line */}
-          <div className="absolute left-6 top-0 bottom-0 w-px bg-border md:left-1/2 md:-translate-x-px" />
-
-          <div className="flex flex-col gap-12">
-            {timeline.map((item, i) => (
-              <div
-                key={item.title}
-                className={`relative flex items-start gap-6 md:gap-0 transition-all duration-600 ${
-                  isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                } ${i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"}`}
-                style={{ transitionDelay: `${i * 150}ms` }}
-              >
-                {/* Content */}
-                <div className={`flex-1 md:pr-12 ${i % 2 !== 0 ? "md:pr-0 md:pl-12" : ""}`}>
-                  <div
-                    className={`rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary/30 ${
-                      i % 2 === 0 ? "md:text-right" : "md:text-left"
-                    }`}
-                  >
-                    <span className="text-xs font-mono text-primary">{item.time}</span>
-                    <h3 className="mt-1 text-lg font-semibold text-foreground">{item.title}</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
-                  </div>
+        <div className="mt-12 grid gap-5">
+          {phases.map((phase, index) => (
+            <article
+              key={phase.title}
+              className={`rounded-2xl border border-border bg-card p-5 transition-all duration-600 ${
+                isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}
+              style={{ transitionDelay: `${index * 120}ms` }}
+            >
+              <div className="flex items-start gap-3">
+                <div className="mt-1 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <phase.icon className="h-5 w-5" />
                 </div>
-
-                {/* Circle on the line */}
-                <div className="absolute left-6 -translate-x-1/2 flex h-12 w-12 items-center justify-center rounded-full border-2 border-primary bg-background md:left-1/2">
-                  <item.icon className="h-5 w-5 text-primary" />
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">{phase.title}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{phase.description}</p>
                 </div>
-
-                {/* Spacer for the other side */}
-                <div className="hidden flex-1 md:block" />
               </div>
-            ))}
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="text-xl font-semibold text-foreground">Day 1 Schedule</h3>
+            <div className="mt-4 space-y-3">
+              {dayOneTimeline.map((item, i) => (
+                <div
+                  key={`${item.time}-${item.title}`}
+                  className={`rounded-lg border border-border bg-secondary/30 px-4 py-3 transition-all duration-600 ${
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  style={{ transitionDelay: `${i * 80}ms` }}
+                >
+                  <p className="inline-flex items-center text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Clock3 className="mr-1 h-3.5 w-3.5" />
+                    {item.time}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">{item.title}</p>
+                  {item.description ? (
+                    <p className="mt-1 text-xs text-muted-foreground">{item.description}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
           </div>
+
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <h3 className="text-xl font-semibold text-foreground">Day 2 Schedule</h3>
+            <div className="mt-4 space-y-3">
+              {dayTwoTimeline.map((item, i) => (
+                <div
+                  key={`${item.time}-${item.title}`}
+                  className={`rounded-lg border border-border bg-secondary/30 px-4 py-3 transition-all duration-600 ${
+                    isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  style={{ transitionDelay: `${i * 80 + 160}ms` }}
+                >
+                  <p className="inline-flex items-center text-xs font-semibold uppercase tracking-wide text-primary">
+                    <Clock3 className="mr-1 h-3.5 w-3.5" />
+                    {item.time}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-foreground">{item.title}</p>
+                  {item.description ? (
+                    <p className="mt-1 text-xs text-muted-foreground">{item.description}</p>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+          Submission portal opens at <span className="font-semibold text-foreground">4:00 PM on March 12, 2026</span> and accepts entries within the configured deadline window.
         </div>
       </div>
     </section>

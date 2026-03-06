@@ -1,38 +1,28 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { Trophy, Medal, Award } from "lucide-react"
+import { Award, Coffee, Gift, IndianRupee } from "lucide-react"
 
 const prizes = [
   {
-    icon: Medal,
-    place: "2nd Place",
-    prize: "Rs. 5,000",
-    color: "text-muted-foreground",
-    borderColor: "border-muted-foreground/30",
-    bgColor: "bg-muted-foreground/5",
-    order: "order-1 md:order-first",
-    size: "py-10",
+    icon: IndianRupee,
+    title: "Cash Prizes",
+    description: "Top-performing teams will receive cash prizes.",
   },
   {
-    icon: Trophy,
-    place: "1st Place",
-    prize: "Rs. 10,000",
-    color: "text-primary",
-    borderColor: "border-primary/40",
-    bgColor: "bg-primary/5",
-    order: "order-first md:order-2",
-    size: "py-14",
+    icon: Gift,
+    title: "Swags",
+    description: "Exclusive event swags for standout participants.",
+  },
+  {
+    icon: Coffee,
+    title: "Food & Beverages",
+    description: "Meals, snacks, and beverages during the hackathon.",
   },
   {
     icon: Award,
-    place: "3rd Place",
-    prize: "Rs. 3,000",
-    color: "text-chart-5",
-    borderColor: "border-chart-5/30",
-    bgColor: "bg-chart-5/5",
-    order: "order-2 md:order-last",
-    size: "py-10",
+    title: "Recognition",
+    description: "Certificates and stage recognition for winners.",
   },
 ]
 
@@ -63,33 +53,30 @@ export function PrizesSection() {
             Rewards
           </span>
           <h2 className="mt-4 text-balance text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-            Prizes Worth Fighting For
+            Rewards for Every Hustle
           </h2>
         </div>
 
-        <div className="mt-16 grid items-end gap-6 sm:grid-cols-3">
+        <div className="mt-16 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {prizes.map((prize, i) => (
             <div
-              key={prize.place}
-              className={`${prize.order} rounded-xl border ${prize.borderColor} ${prize.bgColor} px-6 ${prize.size} text-center transition-all duration-600 hover:scale-105 ${
+              key={prize.title}
+              className={`rounded-xl border border-border bg-card px-6 py-8 text-center transition-all duration-600 hover:border-primary/40 ${
                 isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
               }`}
               style={{ transitionDelay: `${i * 200}ms` }}
             >
-              <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${prize.bgColor}`}>
-                <prize.icon className={`h-8 w-8 ${prize.color}`} />
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
+                <prize.icon className="h-7 w-7 text-primary" />
               </div>
-              <h3 className={`text-xl font-bold ${prize.color}`}>{prize.place}</h3>
-              <p className="mt-2 text-3xl font-bold text-foreground">{prize.prize}</p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                + Certificates & Swag
-              </p>
+              <h3 className="text-xl font-bold text-foreground">{prize.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{prize.description}</p>
             </div>
           ))}
         </div>
 
         <p className="mt-8 text-center text-muted-foreground text-sm">
-          * Prize amounts are indicative. Special category prizes may also be awarded.
+          Final reward categories may include additional sponsor specials.
         </p>
       </div>
     </section>

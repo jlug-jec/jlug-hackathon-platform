@@ -14,7 +14,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { submissionSchema, type SubmissionInput } from "@/lib/validation"
 
 type SubmissionFormProps = {
-  isSubmissionOpen: boolean
+  canSubmit: boolean
+  isSubmissionStarted: boolean
+  submissionStartText: string
   deadlineText: string
 }
 
@@ -24,7 +26,12 @@ type SubmissionResponse = {
   message: string
 }
 
-export function SubmissionForm({ isSubmissionOpen, deadlineText }: SubmissionFormProps) {
+export function SubmissionForm({
+  canSubmit,
+  isSubmissionStarted,
+  submissionStartText,
+  deadlineText,
+}: SubmissionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [result, setResult] = useState<SubmissionResponse | null>(null)
 
@@ -45,8 +52,12 @@ export function SubmissionForm({ isSubmissionOpen, deadlineText }: SubmissionFor
   })
 
   const onSubmit = async (values: SubmissionInput) => {
-    if (!isSubmissionOpen) {
-      toast.error("Submission window is closed.")
+    if (!canSubmit) {
+      toast.error(
+        isSubmissionStarted
+          ? "Submission window is closed."
+          : "Submission has not started yet.",
+      )
       return
     }
 
@@ -85,12 +96,18 @@ export function SubmissionForm({ isSubmissionOpen, deadlineText }: SubmissionFor
             Use team code and team leader email to submit or update your project links.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
+            Submission starts:{" "}
+            <span className="font-semibold text-foreground">{submissionStartText}</span>
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
             Deadline: <span className="font-semibold text-foreground">{deadlineText}</span>
           </p>
 
-          {!isSubmissionOpen && (
+          {!canSubmit && (
             <div className="mt-5 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              Submission window is currently closed.
+              {isSubmissionStarted
+                ? "Submission window is currently closed."
+                : `Submission will open at ${submissionStartText}.`}
             </div>
           )}
 
@@ -188,7 +205,7 @@ export function SubmissionForm({ isSubmissionOpen, deadlineText }: SubmissionFor
             <Button
               type="submit"
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              disabled={isSubmitting || !isSubmissionOpen}
+              disabled={isSubmitting || !canSubmit}
             >
               {isSubmitting ? (
                 <>

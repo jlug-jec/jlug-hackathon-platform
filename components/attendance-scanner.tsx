@@ -2,38 +2,57 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { BrowserQRCodeReader, type IScannerControls } from "@zxing/browser"
-import { Camera, Loader2, LogOut, QrCode, RefreshCw } from "lucide-react"
+import { Camera, ExternalLink, Loader2, LogOut, QrCode, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+type AttendanceDay = "day1" | "day2"
 
 type DashboardOverview = {
   teamCode: string
   teamName: string
   memberCount: number
   paymentStatus: string
-  attendanceMarkedAt: string | null
+  attendanceDay1MarkedAt: string | null
+  attendanceDay2MarkedAt: string | null
+  hasSubmission: boolean
+  submissionUpdatedAt: string | null
+  githubUrl: string | null
+  videoUrl: string | null
+  presentationUrl: string | null
   createdAt: string
 }
 
 type RecentEntry = {
   teamCode: string
   teamName: string
+  day: AttendanceDay
   markedAt: string
   markedBy: string | null
 }
 
 type ScannerProps = {
   initialTotalTeams: number
-  initialAttendedTeams: number
-  initialPendingTeams: number
+  initialDay1AttendedTeams: number
+  initialDay1PendingTeams: number
+  initialDay2AttendedTeams: number
+  initialDay2PendingTeams: number
   initialRecentEntries: RecentEntry[]
   initialTeamOverview: DashboardOverview[]
   adminUsername: string
 }
 
 type MarkAttendanceResult = {
+  day: AttendanceDay
   teamCode: string
   teamName: string
   memberCount: number
@@ -44,16 +63,21 @@ type MarkAttendanceResult = {
 
 export function AttendanceScanner({
   initialTotalTeams,
-  initialAttendedTeams,
-  initialPendingTeams,
+  initialDay1AttendedTeams,
+  initialDay1PendingTeams,
+  initialDay2AttendedTeams,
+  initialDay2PendingTeams,
   initialRecentEntries,
   initialTeamOverview,
   adminUsername,
 }: ScannerProps) {
   const [recentEntries, setRecentEntries] = useState<RecentEntry[]>(initialRecentEntries)
   const [teamOverview, setTeamOverview] = useState<DashboardOverview[]>(initialTeamOverview)
-  const [attendedTeams, setAttendedTeams] = useState(initialAttendedTeams)
-  const [pendingTeams, setPendingTeams] = useState(initialPendingTeams)
+  const [day1AttendedTeams, setDay1AttendedTeams] = useState(initialDay1AttendedTeams)
+  const [day1PendingTeams, setDay1PendingTeams] = useState(initialDay1PendingTeams)
+  const [day2AttendedTeams, setDay2AttendedTeams] = useState(initialDay2AttendedTeams)
+  const [day2PendingTeams, setDay2PendingTeams] = useState(initialDay2PendingTeams)
+  const [selectedDay, setSelectedDay] = useState<AttendanceDay>("day1")
   const [manualValue, setManualValue] = useState("")
   const [lastResult, setLastResult] = useState<MarkAttendanceResult | null>(null)
   const [cameraError, setCameraError] = useState<string | null>(null)
@@ -63,7 +87,11 @@ export function AttendanceScanner({
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const controlsRef = useRef<IScannerControls | null>(null)
-  const lastPayloadRef = useRef<{ value: string; at: number }>({ value: "", at: 0 })
+  const lastPayloadRef = useRef<{ value: string; day: AttendanceDay; at: number }>({
+    value: "",
+    day: "day1",
+    at: 0,
+  })
   const isMarkingRef = useRef(false)
 
   const applyMarkResult = useCallback((result: MarkAttendanceResult) => {
@@ -73,25 +101,36 @@ export function AttendanceScanner({
         {
           teamCode: result.teamCode,
           teamName: result.teamName,
+          day: result.day,
           markedAt: result.markedAt,
           markedBy: result.markedBy,
         },
-        ...current.filter((entry) => entry.teamCode !== result.teamCode),
+        ...current.filter(
+          (entry) =>
+            !(entry.teamCode === result.teamCode && entry.day === result.day),
+        ),
       ]
       return next.slice(0, 20)
     })
 
     setTeamOverview((current) =>
-      current.map((team) =>
-        team.teamCode === result.teamCode
-          ? { ...team, attendanceMarkedAt: result.markedAt }
-          : team,
-      ),
+      current.map((team) => {
+        if (team.teamCode !== result.teamCode) return team
+        if (result.day === "day1") {
+          return { ...team, attendanceDay1MarkedAt: result.markedAt }
+        }
+        return { ...team, attendanceDay2MarkedAt: result.markedAt }
+      }),
     )
 
     if (!result.alreadyMarked) {
-      setAttendedTeams((count) => count + 1)
-      setPendingTeams((count) => Math.max(0, count - 1))
+      if (result.day === "day1") {
+        setDay1AttendedTeams((count) => count + 1)
+        setDay1PendingTeams((count) => Math.max(0, count - 1))
+      } else {
+        setDay2AttendedTeams((count) => count + 1)
+        setDay2PendingTeams((count) => Math.max(0, count - 1))
+      }
     }
   }, [])
 
@@ -101,13 +140,17 @@ export function AttendanceScanner({
       if (!value) return
 
       const now = Date.now()
-      if (lastPayloadRef.current.value === value && now - lastPayloadRef.current.at < 2500) {
+      if (
+        lastPayloadRef.current.value === value &&
+        lastPayloadRef.current.day === selectedDay &&
+        now - lastPayloadRef.current.at < 2500
+      ) {
         return
       }
 
       if (isMarkingRef.current) return
 
-      lastPayloadRef.current = { value, at: now }
+      lastPayloadRef.current = { value, day: selectedDay, at: now }
       setIsMarking(true)
       isMarkingRef.current = true
 
@@ -115,7 +158,7 @@ export function AttendanceScanner({
         const response = await fetch("/api/admin/attendance/mark", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ payload: value }),
+          body: JSON.stringify({ payload: value, day: selectedDay }),
         })
 
         const data = await response.json()
@@ -133,7 +176,7 @@ export function AttendanceScanner({
         isMarkingRef.current = false
       }
     },
-    [applyMarkResult],
+    [applyMarkResult, selectedDay],
   )
 
   const startScanner = useCallback(async () => {
@@ -214,10 +257,12 @@ export function AttendanceScanner({
           </Button>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <MetricCard label="Registered Teams" value={initialTotalTeams} />
-          <MetricCard label="Attendance Marked" value={attendedTeams} />
-          <MetricCard label="Pending Entry" value={pendingTeams} />
+          <MetricCard label="Day 1 Marked" value={day1AttendedTeams} />
+          <MetricCard label="Day 1 Pending" value={day1PendingTeams} />
+          <MetricCard label="Day 2 Marked" value={day2AttendedTeams} />
+          <MetricCard label="Day 2 Pending" value={day2PendingTeams} />
         </div>
 
         <div className="mt-6 grid gap-6 xl:grid-cols-[420px_1fr]">
@@ -228,6 +273,24 @@ export function AttendanceScanner({
                 <RefreshCw className="mr-1 h-4 w-4" />
                 Restart
               </Button>
+            </div>
+
+            <div className="mt-4">
+              <p className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">
+                Attendance Slot
+              </p>
+              <Select value={selectedDay} onValueChange={(value) => setSelectedDay(value as AttendanceDay)}>
+                <SelectTrigger className="bg-input border-border text-foreground">
+                  <SelectValue placeholder="Select day" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover border-border">
+                  <SelectItem value="day1">Day 1</SelectItem>
+                  <SelectItem value="day2">Day 2</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Selected day applies to both camera scan and manual entry.
+              </p>
             </div>
 
             <div className="mt-4 overflow-hidden rounded-xl border border-border bg-black/20">
@@ -260,7 +323,11 @@ export function AttendanceScanner({
                   className="bg-input border-border text-foreground"
                 />
                 <Button onClick={() => void markAttendance(manualValue)} disabled={isMarking}>
-                  {isMarking ? <Loader2 className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
+                  {isMarking ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <QrCode className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -271,7 +338,8 @@ export function AttendanceScanner({
                   {lastResult.teamCode} - {lastResult.teamName}
                 </p>
                 <p className="mt-1 text-muted-foreground">
-                  {lastResult.alreadyMarked ? "Already marked at" : "Marked at"}{" "}
+                  {dayLabel(lastResult.day)}:{" "}
+                  {lastResult.alreadyMarked ? "already marked at" : "marked at"}{" "}
                   {new Date(lastResult.markedAt).toLocaleString("en-IN")}
                 </p>
               </div>
@@ -286,6 +354,7 @@ export function AttendanceScanner({
                   <thead>
                     <tr className="text-left text-muted-foreground">
                       <th className="px-3 py-2">Team</th>
+                      <th className="px-3 py-2">Day</th>
                       <th className="px-3 py-2">Marked At</th>
                       <th className="px-3 py-2">By</th>
                     </tr>
@@ -293,17 +362,21 @@ export function AttendanceScanner({
                   <tbody>
                     {recentEntries.length === 0 ? (
                       <tr>
-                        <td className="px-3 py-4 text-muted-foreground" colSpan={3}>
+                        <td className="px-3 py-4 text-muted-foreground" colSpan={4}>
                           No attendance marked yet.
                         </td>
                       </tr>
                     ) : (
                       recentEntries.map((entry) => (
-                        <tr key={`${entry.teamCode}-${entry.markedAt}`} className="border-t border-border">
+                        <tr
+                          key={`${entry.teamCode}-${entry.day}-${entry.markedAt}`}
+                          className="border-t border-border"
+                        >
                           <td className="px-3 py-2">
                             <p className="font-semibold text-foreground">{entry.teamCode}</p>
                             <p className="text-xs text-muted-foreground">{entry.teamName}</p>
                           </td>
+                          <td className="px-3 py-2 text-muted-foreground">{dayLabel(entry.day)}</td>
                           <td className="px-3 py-2 text-muted-foreground">
                             {new Date(entry.markedAt).toLocaleString("en-IN")}
                           </td>
@@ -325,7 +398,9 @@ export function AttendanceScanner({
                       <th className="px-3 py-2">Team</th>
                       <th className="px-3 py-2">Members</th>
                       <th className="px-3 py-2">Payment</th>
-                      <th className="px-3 py-2">Attendance</th>
+                      <th className="px-3 py-2">Day 1</th>
+                      <th className="px-3 py-2">Day 2</th>
+                      <th className="px-3 py-2">Submission</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -338,9 +413,47 @@ export function AttendanceScanner({
                         <td className="px-3 py-2 text-muted-foreground">{team.memberCount}</td>
                         <td className="px-3 py-2 text-muted-foreground capitalize">{team.paymentStatus}</td>
                         <td className="px-3 py-2 text-muted-foreground">
-                          {team.attendanceMarkedAt
-                            ? new Date(team.attendanceMarkedAt).toLocaleTimeString("en-IN")
-                            : "Pending"}
+                          {formatAttendanceTime(team.attendanceDay1MarkedAt)}
+                        </td>
+                        <td className="px-3 py-2 text-muted-foreground">
+                          {formatAttendanceTime(team.attendanceDay2MarkedAt)}
+                        </td>
+                        <td className="px-3 py-2">
+                          {team.hasSubmission ? (
+                            <div className="flex flex-wrap gap-2">
+                              <a
+                                href={team.githubUrl || "#"}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center rounded-md border border-border px-2 py-1 text-xs text-primary hover:border-primary/40"
+                              >
+                                GitHub
+                                <ExternalLink className="ml-1 h-3 w-3" />
+                              </a>
+                              <a
+                                href={team.videoUrl || "#"}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center rounded-md border border-border px-2 py-1 text-xs text-primary hover:border-primary/40"
+                              >
+                                Video
+                                <ExternalLink className="ml-1 h-3 w-3" />
+                              </a>
+                              {team.presentationUrl ? (
+                                <a
+                                  href={team.presentationUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center rounded-md border border-border px-2 py-1 text-xs text-primary hover:border-primary/40"
+                                >
+                                  PPT
+                                  <ExternalLink className="ml-1 h-3 w-3" />
+                                </a>
+                              ) : null}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Not submitted</span>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -362,4 +475,13 @@ function MetricCard({ label, value }: { label: string; value: number }) {
       <p className="mt-2 text-3xl font-bold text-foreground">{value}</p>
     </div>
   )
+}
+
+function formatAttendanceTime(value: string | null): string {
+  if (!value) return "Pending"
+  return new Date(value).toLocaleString("en-IN")
+}
+
+function dayLabel(day: AttendanceDay): string {
+  return day === "day1" ? "Day 1" : "Day 2"
 }

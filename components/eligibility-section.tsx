@@ -15,7 +15,13 @@ const criteria = [
     icon: Users,
     title: "Team Size",
     description:
-      "Each team must have a minimum of 3 and maximum of 6 participants including the team leader.",
+      "Each team must have a minimum of 3 and maximum of 5 participants including the team leader.",
+  },
+  {
+    icon: UserCheck,
+    title: "Gender Mix",
+    description:
+      "Each team must include at least one boy and one girl participant.",
   },
   {
     icon: UserCheck,

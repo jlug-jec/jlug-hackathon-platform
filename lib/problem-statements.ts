@@ -12,9 +12,12 @@ export type ProblemStatementContext = {
   title: string
   timezone: string
   revealAt: Date
+  submissionStartsAt: Date
   submissionDeadline: Date
   isRevealed: boolean
+  isSubmissionStarted: boolean
   isSubmissionOpen: boolean
+  canSubmit: boolean
   items: ProblemStatementItem[]
 }
 
@@ -28,18 +31,28 @@ function parseIsoDate(value: string, label: string): Date {
 
 export function getProblemStatementContext(now = new Date()): ProblemStatementContext {
   const revealAt = parseIsoDate(problemStatements.revealAt, "revealAt")
+  const submissionStartsAt = parseIsoDate(
+    problemStatements.submissionStartsAt,
+    "submissionStartsAt",
+  )
   const submissionDeadline = parseIsoDate(
     problemStatements.submissionDeadline,
     "submissionDeadline",
   )
+  const isSubmissionStarted = now >= submissionStartsAt
+  const isSubmissionOpen = now <= submissionDeadline
+  const canSubmit = isSubmissionStarted && isSubmissionOpen
 
   return {
     title: problemStatements.title,
     timezone: problemStatements.timezone || "Asia/Kolkata",
     revealAt,
+    submissionStartsAt,
     submissionDeadline,
     isRevealed: now >= revealAt,
-    isSubmissionOpen: now <= submissionDeadline,
+    isSubmissionStarted,
+    isSubmissionOpen,
+    canSubmit,
     items: problemStatements.items,
   }
 }

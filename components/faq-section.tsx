@@ -8,7 +8,12 @@ const faqs = [
   {
     question: "What is the team size?",
     answer:
-      "Team size must be between 3 and 6 members. One participant must be marked as team leader.",
+      "Team size must be between 3 and 5 members. One participant must be marked as team leader.",
+  },
+  {
+    question: "Is gender diversity mandatory in a team?",
+    answer:
+      "Yes. Every team must include at least one boy and at least one girl during registration.",
   },
   {
     question: "What is the registration fee?",

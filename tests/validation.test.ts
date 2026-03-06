@@ -14,6 +14,7 @@ function buildRegistrationPayload() {
       phone: "9876543210",
       department: "Computer Science",
       year: "3rd Year",
+      gender: "Male",
     },
     members: [
       {
@@ -22,6 +23,7 @@ function buildRegistrationPayload() {
         phone: "9876543211",
         department: "Computer Science",
         year: "3rd Year",
+        gender: "Female",
       },
       {
         name: "Member Two",
@@ -29,6 +31,7 @@ function buildRegistrationPayload() {
         phone: "9876543212",
         department: "Information Technology",
         year: "2nd Year",
+        gender: "Male",
       },
     ],
     payment: {
@@ -62,6 +65,47 @@ describe("registrationSchema", () => {
   it("rejects invalid screenshot format", () => {
     const payload = buildRegistrationPayload()
     payload.payment.paymentScreenshotDataUrl = "data:text/plain;base64,Zm9v"
+    const result = registrationSchema.safeParse(payload)
+    expect(result.success).toBe(false)
+  })
+
+  it("rejects teams without both genders", () => {
+    const payload = buildRegistrationPayload()
+    payload.leader.gender = "Male"
+    payload.members[0].gender = "Male"
+    payload.members[1].gender = "Male"
+    const result = registrationSchema.safeParse(payload)
+    expect(result.success).toBe(false)
+  })
+
+  it("rejects more than 5 participants total", () => {
+    const payload = buildRegistrationPayload()
+    payload.members.push(
+      {
+        name: "Member Three",
+        email: "member3@example.com",
+        phone: "9876543213",
+        department: "Mechanical Engineering",
+        year: "2nd Year",
+        gender: "Female",
+      },
+      {
+        name: "Member Four",
+        email: "member4@example.com",
+        phone: "9876543214",
+        department: "Civil Engineering",
+        year: "1st Year",
+        gender: "Male",
+      },
+      {
+        name: "Member Five",
+        email: "member5@example.com",
+        phone: "9876543215",
+        department: "Information Technology",
+        year: "1st Year",
+        gender: "Female",
+      },
+    )
     const result = registrationSchema.safeParse(payload)
     expect(result.success).toBe(false)
   })

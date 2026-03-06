@@ -2,9 +2,9 @@
 
 Next.js app for:
 - landing page with event details
-- team registration (3-6 members) + UPI payment details
+- team registration (3-5 members) + UPI payment details
 - generated team card with unique attendance QR
-- admin attendance scanner dashboard
+- admin attendance scanner dashboard (day-wise attendance: Day 1 and Day 2)
 - team project submission + public submissions page
 
 ## Tech Stack
@@ -39,6 +39,7 @@ Edit:
 
 Fields:
 - `revealAt`: when problem statements become visible on landing page
+- `submissionStartsAt`: submission form unlock time (configured to 4:00 PM, March 12, 2026)
 - `submissionDeadline`: used to accept/reject project submissions
 - `items`: list of statements (title, description, tags, sponsor)
 
@@ -52,5 +53,8 @@ npm run dev
 ## Notes
 - DB schema is auto-created on first API/database call.
 - Team code format: `CK26-XXXXXX`.
-- Admin attendance page: `/admin/attendance`.
+- Admin login: `/admin/login`.
+- Admin attendance page: `/admin/attendance` (after login).
+- Admin can choose `Day 1` or `Day 2` before scanning QR and mark attendance separately for both days.
+- Team QR payload uses a unique per-team attendance token (`codekumbh26:entry:<token>`), and tokens are unique in DB.
 - Payment screenshot upload is mandatory at registration time.

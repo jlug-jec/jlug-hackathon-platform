@@ -12,6 +12,14 @@ export async function POST(request: Request) {
     const parsed = submissionSchema.parse(payload)
 
     const context = getProblemStatementContext()
+    if (!context.isSubmissionStarted) {
+      const startText = formatInTimezone(context.submissionStartsAt, context.timezone)
+      throw new AppError(
+        `Submission has not started yet. It opens at ${startText} (${context.timezone}).`,
+        403,
+      )
+    }
+
     if (!context.isSubmissionOpen) {
       const deadlineText = formatInTimezone(context.submissionDeadline, context.timezone)
       throw new AppError(

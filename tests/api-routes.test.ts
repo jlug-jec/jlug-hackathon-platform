@@ -26,6 +26,7 @@ const validRegistrationPayload = {
     phone: "9876543210",
     department: "Computer Science",
     year: "3rd Year",
+    gender: "Male",
   },
   members: [
     {
@@ -34,6 +35,7 @@ const validRegistrationPayload = {
       phone: "9876543211",
       department: "Computer Science",
       year: "2nd Year",
+      gender: "Female",
     },
     {
       name: "Member Two",
@@ -41,6 +43,7 @@ const validRegistrationPayload = {
       phone: "9876543212",
       department: "Information Technology",
       year: "1st Year",
+      gender: "Male",
     },
   ],
   payment: {
@@ -94,10 +97,43 @@ describe("API routes", () => {
   it("submissions route returns 403 when deadline is over", async () => {
     getProblemStatementContextMock.mockReturnValue({
       timezone: "Asia/Kolkata",
+      submissionStartsAt: new Date("2026-02-25T00:00:00+05:30"),
       submissionDeadline: new Date("2026-03-01T00:00:00+05:30"),
+      isSubmissionStarted: true,
       isSubmissionOpen: false,
+      canSubmit: false,
     })
     formatInTimezoneMock.mockReturnValue("Saturday, March 1, 2026 at 12:00 am")
+
+    const { POST } = await import("@/app/api/submissions/route")
+    const request = new Request("http://localhost/api/submissions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        teamCode: "CK26-AB12CD",
+        leaderEmail: "leader@team.dev",
+        githubUrl: "https://github.com/example/repo",
+        videoUrl: "https://youtu.be/demo",
+        presentationUrl: "",
+        remarks: "",
+      }),
+    })
+
+    const response = await POST(request)
+    expect(response.status).toBe(403)
+    expect(submitProjectMock).not.toHaveBeenCalled()
+  })
+
+  it("submissions route returns 403 when submission has not started", async () => {
+    getProblemStatementContextMock.mockReturnValue({
+      timezone: "Asia/Kolkata",
+      submissionStartsAt: new Date("2026-03-12T16:00:00+05:30"),
+      submissionDeadline: new Date("2026-03-21T16:00:00+05:30"),
+      isSubmissionStarted: false,
+      isSubmissionOpen: true,
+      canSubmit: false,
+    })
+    formatInTimezoneMock.mockReturnValue("Thursday, March 12, 2026 at 4:00 pm")
 
     const { POST } = await import("@/app/api/submissions/route")
     const request = new Request("http://localhost/api/submissions", {

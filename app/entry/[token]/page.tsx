@@ -29,13 +29,20 @@ export default async function EntryTokenPage({ params }: EntryTokenPageProps) {
               <p className="mt-5 text-sm text-muted-foreground">
                 This QR token is valid. Show this page/QR to the admin scanner desk at entry.
               </p>
-              {team.attendanceMarkedAt ? (
-                <p className="mt-3 text-sm text-primary">
-                  Attendance already marked on {new Date(team.attendanceMarkedAt).toLocaleString("en-IN")}
+              <div className="mt-4 space-y-1 text-sm">
+                <p className="text-muted-foreground">
+                  Day 1:{" "}
+                  {team.attendanceDay1MarkedAt
+                    ? `Marked on ${new Date(team.attendanceDay1MarkedAt).toLocaleString("en-IN")}`
+                    : "Pending"}
                 </p>
-              ) : (
-                <p className="mt-3 text-sm text-foreground">Attendance not marked yet.</p>
-              )}
+                <p className="text-muted-foreground">
+                  Day 2:{" "}
+                  {team.attendanceDay2MarkedAt
+                    ? `Marked on ${new Date(team.attendanceDay2MarkedAt).toLocaleString("en-IN")}`
+                    : "Pending"}
+                </p>
+              </div>
             </>
           ) : (
             <>

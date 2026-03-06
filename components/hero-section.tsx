@@ -71,7 +71,7 @@ export function HeroSection() {
           </div>
           <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm text-secondary-foreground">
             <Users className="h-4 w-4 text-primary" />
-            <span>Teams of 3-6</span>
+            <span>Teams of 3-5</span>
           </div>
         </div>
 

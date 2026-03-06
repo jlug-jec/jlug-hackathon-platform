@@ -17,11 +17,11 @@ export async function POST(request: NextRequest) {
 
     const payload = await request.json()
     const parsed = attendanceMarkSchema.parse(payload)
-    const result = await markAttendanceFromPayload(parsed.payload, session.username)
+    const result = await markAttendanceFromPayload(parsed.payload, session.username, parsed.day)
 
     return NextResponse.json({
       message: result.alreadyMarked
-        ? "Attendance was already marked for this team."
+        ? `Attendance for ${result.day.toUpperCase()} was already marked for this team.`
         : "Attendance marked successfully.",
       result,
     })

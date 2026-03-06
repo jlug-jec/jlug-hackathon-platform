@@ -29,7 +29,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { departmentOptions, paymentSchema, teamDetailsSchema, yearOptions } from "@/lib/validation"
+import {
+  departmentOptions,
+  genderOptions,
+  paymentSchema,
+  teamDetailsSchema,
+  yearOptions,
+} from "@/lib/validation"
 import type { PaymentInput, TeamDetailsInput } from "@/lib/validation"
 
 type FormStep = "details" | "payment" | "success"
@@ -51,6 +57,7 @@ const emptyMember = {
   email: "",
   department: "",
   year: "",
+  gender: "",
 }
 
 export function RegistrationForm() {
@@ -100,8 +107,8 @@ export function RegistrationForm() {
   }
 
   const addMember = () => {
-    if (fields.length >= 5) {
-      toast.error("Maximum team size reached (6 including leader).")
+    if (fields.length >= 4) {
+      toast.error("Maximum team size reached (5 including leader).")
       return
     }
     append({ ...emptyMember })
@@ -419,7 +426,7 @@ export function RegistrationForm() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
                 <Users className="h-5 w-5 text-primary" />
-                Team Members ({fields.length + 1}/6)
+                Team Members ({fields.length + 1}/5)
               </h2>
               <Button type="button" variant="outline" onClick={addMember}>
                 <Plus className="mr-1 h-4 w-4" />
@@ -463,7 +470,8 @@ export function RegistrationForm() {
               Proceed to Payment
             </Button>
             <p className="text-xs text-muted-foreground">
-              Fee: Rs. {registrationFee} per team. Team size: 3 to 6 participants.
+              Fee: Rs. {registrationFee} per team. Team size: 3 to 5 participants with at least 1
+              boy and 1 girl.
             </p>
           </div>
         </form>
@@ -571,6 +579,29 @@ function ParticipantFields({ prefix, register, control, errors }: ParticipantFie
           )}
         />
         {currentErrors.year && <FieldError message={currentErrors.year?.message} />}
+      </div>
+
+      <div className="sm:col-span-2">
+        <Label className="mb-2 block text-sm text-foreground">Gender</Label>
+        <Controller
+          name={`${prefix}.gender`}
+          control={control}
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger className="bg-input border-border text-foreground">
+                <SelectValue placeholder="Select gender" />
+              </SelectTrigger>
+              <SelectContent className="bg-popover border-border">
+                {genderOptions.map((gender) => (
+                  <SelectItem key={gender} value={gender}>
+                    {gender}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {currentErrors.gender && <FieldError message={currentErrors.gender?.message} />}
       </div>
     </div>
   )

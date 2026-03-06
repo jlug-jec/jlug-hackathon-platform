@@ -18,4 +18,16 @@ describe("problem statements context", () => {
     expect(typeof text).toBe("string")
     expect(text.length).toBeGreaterThan(0)
   })
+
+  it("keeps submission disabled before 12 March 2026, 4:00 PM IST", () => {
+    const context = getProblemStatementContext(new Date("2026-03-12T15:59:00+05:30"))
+    expect(context.isSubmissionStarted).toBe(false)
+    expect(context.canSubmit).toBe(false)
+  })
+
+  it("opens submission at and after 12 March 2026, 4:00 PM IST", () => {
+    const context = getProblemStatementContext(new Date("2026-03-12T16:00:00+05:30"))
+    expect(context.isSubmissionStarted).toBe(true)
+    expect(context.canSubmit).toBe(true)
+  })
 })
