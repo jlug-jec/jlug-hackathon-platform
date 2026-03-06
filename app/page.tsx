@@ -5,9 +5,10 @@ import { AboutSection } from "@/components/about-section"
 import { TimelineSection } from "@/components/timeline-section"
 import { EligibilitySection } from "@/components/eligibility-section"
 import { FAQSection } from "@/components/faq-section"
-import { RegistrationForm } from "@/components/registration-form"
 import { Footer } from "@/components/footer"
 import { PrizesSection } from "@/components/prizes-section"
+import { RegistrationStepsSection } from "@/components/registration-steps-section"
+import { ProblemStatementsSection } from "@/components/problem-statements-section"
 
 export default function Home() {
   return (
@@ -18,9 +19,10 @@ export default function Home() {
       <AboutSection />
       <TimelineSection />
       <PrizesSection/>
+      <RegistrationStepsSection />
+      <ProblemStatementsSection />
       <EligibilitySection />
       <FAQSection />
-      <RegistrationForm />
       <Footer />
     </main>
   )

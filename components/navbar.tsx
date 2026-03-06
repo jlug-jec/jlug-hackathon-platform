@@ -1,15 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Menu, X, Terminal } from "lucide-react"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { Menu, Terminal, X } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 
 const navLinks = [
-  { label: "About", href: "#about" },
-  { label: "Timeline", href: "#timeline" },
-  { label: "Prizes", href: "#prizes" },
-  { label: "Eligibility", href: "#eligibility" },
-  { label: "FAQ", href: "#faq" },
+  { label: "About", href: "/#about" },
+  { label: "Timeline", href: "/#timeline" },
+  { label: "Rules", href: "/#process" },
+  { label: "Problems", href: "/#problems" },
+  { label: "Submit", href: "/submit" },
+  { label: "Submissions", href: "/submissions" },
 ]
 
 export function Navbar() {
@@ -25,42 +28,40 @@ export function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border"
-          : "bg-transparent"
+        scrolled ? "bg-background/80 backdrop-blur-xl border-b border-border" : "bg-transparent"
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
-        <a href="#" className="flex items-center gap-2">
+        <Link href="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
             <Terminal className="h-5 w-5 text-primary" />
           </div>
           <span className="text-lg font-bold tracking-tight text-foreground">
             CodeKumbh<span className="text-primary">2.0</span>
           </span>
-        </a>
+        </Link>
 
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
               className="rounded-lg px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
 
-        <a href="#register" className="hidden md:block">
+        <Link href="/register" className="hidden md:block">
           <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-            Register Now
+            Register Team
           </Button>
-        </a>
+        </Link>
 
         <button
           className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground md:hidden hover:bg-secondary"
-          onClick={() => setMobileOpen(!mobileOpen)}
+          onClick={() => setMobileOpen((current) => !current)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -71,20 +72,20 @@ export function Navbar() {
         <div className="border-t border-border bg-background/95 backdrop-blur-xl md:hidden">
           <div className="flex flex-col gap-1 p-4">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.label}
                 href={link.href}
                 className="rounded-lg px-4 py-3 text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-secondary"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
-            <a href="#register" onClick={() => setMobileOpen(false)}>
+            <Link href="/register" onClick={() => setMobileOpen(false)}>
               <Button className="mt-2 w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-                Register Now
+                Register Team
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
       )}

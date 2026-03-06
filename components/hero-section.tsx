@@ -1,10 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { ArrowDown, Calendar, MapPin, Users } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 
 const words = ["Innovate", "Create", "Build", "Compete", "Conquer"]
+
+const eventDates = process.env.NEXT_PUBLIC_EVENT_DATES || "Dates will be announced shortly"
+const eventVenue = process.env.NEXT_PUBLIC_EVENT_VENUE || "JEC Campus, Jabalpur"
 
 export function HeroSection() {
   const [currentWord, setCurrentWord] = useState(0)
@@ -15,12 +20,12 @@ export function HeroSection() {
     const interval = setInterval(() => {
       setCurrentWord((prev) => (prev + 1) % words.length)
     }, 2500)
+
     return () => clearInterval(interval)
   }, [])
 
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden px-4 pt-20">
-      {/* Radial glow behind hero text */}
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[120px]" />
 
       <div
@@ -28,7 +33,6 @@ export function HeroSection() {
           isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
         }`}
       >
-        {/* Badge */}
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
@@ -37,14 +41,10 @@ export function HeroSection() {
           Registration Open
         </div>
 
-        {/* Main heading */}
         <h1 className="text-balance text-5xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
           Code.{" "}
           <span className="relative inline-block">
-            <span
-              key={currentWord}
-              className="inline-block text-primary animate-fade-in-up"
-            >
+            <span key={currentWord} className="inline-block text-primary animate-fade-in-up">
               {words[currentWord]}
             </span>
           </span>
@@ -56,19 +56,18 @@ export function HeroSection() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground leading-relaxed md:text-xl">
-          24 hours. Unlimited possibilities. Join hundreds of developers,
-          designers, and innovators for the most electrifying hackathon of the year.
+          Build real projects in a high-energy hackathon with your team. Register, complete UPI
+          fee payment, get your QR-enabled team card, and submit before the deadline.
         </p>
 
-        {/* Info chips */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm text-secondary-foreground">
             <Calendar className="h-4 w-4 text-primary" />
-            <span>March 12-13, 2026</span>
+            <span>{eventDates}</span>
           </div>
           <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm text-secondary-foreground">
             <MapPin className="h-4 w-4 text-primary" />
-            <span>Jashan Hall</span>
+            <span>{eventVenue}</span>
           </div>
           <div className="flex items-center gap-2 rounded-lg border border-border bg-secondary px-4 py-2 text-sm text-secondary-foreground">
             <Users className="h-4 w-4 text-primary" />
@@ -76,36 +75,34 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* CTA Buttons */}
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a href="#register">
+          <Link href="/register">
             <Button
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base px-8 py-6"
             >
               Register Your Team
             </Button>
-          </a>
-          <a href="#about">
+          </Link>
+          <Link href="/submit">
             <Button
               size="lg"
               variant="outline"
               className="border-border text-foreground hover:bg-secondary font-semibold text-base px-8 py-6"
             >
-              Learn More
+              Submit Project
             </Button>
-          </a>
+          </Link>
         </div>
 
-        {/* Scroll indicator */}
         <div className="mt-16 flex justify-center">
-          <a
-            href="#about"
+          <Link
+            href="/#about"
             className="flex flex-col items-center gap-2 text-muted-foreground transition-colors hover:text-primary"
           >
             <span className="text-xs uppercase tracking-widest">Scroll</span>
             <ArrowDown className="h-4 w-4 animate-bounce" />
-          </a>
+          </Link>
         </div>
       </div>
     </section>

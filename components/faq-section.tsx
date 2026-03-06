@@ -1,43 +1,39 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 const faqs = [
   {
     question: "What is the team size?",
     answer:
-      "Each team must have a minimum of 3 members and a maximum of 6 members. It is mandatory to have at least one female candidate in each team.",
+      "Team size must be between 3 and 6 members. One participant must be marked as team leader.",
   },
   {
     question: "What is the registration fee?",
     answer:
-      "The registration fee is Rs. 250 per team (not per person). Payment must be completed during the registration process.",
+      "The registration fee is Rs. 250 per team (not per participant). Payment details are filled after team details.",
   },
   {
-    question: "Who can participate?",
+    question: "How is attendance marked on event day?",
     answer:
-      "CodeKumbh is open only to students of JEC. Participants must be passionate about coding, teamwork, and innovation.",
+      "After registration, each team gets a unique QR-enabled ID card. Admin scans that QR at entry to mark attendance.",
   },
   {
-    question: "What should we bring?",
+    question: "When will problem statements be available?",
     answer:
-      "Bring your laptops, chargers, and any necessary development tool you might need. We will provide food, beverages, Wi-Fi, and a comfortable workspace.",
+      "Problem statements are controlled by reveal date in the problem statements JSON config. Before reveal, they stay locked on the website.",
   },
   {
-    question: "Can I participate alone?",
+    question: "How do we submit our project?",
     answer:
-      "No, the minimum team size is 3 members, with a minimum of 1 female member.",
+      "Use the submission page with your team code and leader email. Submit GitHub URL, demo video URL, and optional presentation link before deadline.",
   },
   {
-    question: "Will food and refreshments be provided?",
+    question: "Can we edit submission after first submit?",
     answer:
-      "Yes, food and refreshments will be available during the event. However, additional charges may apply for certain meals.",
+      "Yes. Teams can resubmit using the same team code and leader email until submission deadline.",
   },
 ]
 
@@ -50,7 +46,7 @@ export function FAQSection() {
       ([entry]) => {
         if (entry.isIntersecting) setIsVisible(true)
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     )
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
@@ -78,10 +74,10 @@ export function FAQSection() {
           }`}
         >
           <Accordion type="single" collapsible className="flex flex-col gap-3">
-            {faqs.map((faq, i) => (
+            {faqs.map((faq, index) => (
               <AccordionItem
-                key={i}
-                value={`item-${i}`}
+                key={faq.question}
+                value={`item-${index}`}
                 className="rounded-xl border border-border bg-card px-6 data-[state=open]:border-primary/30"
               >
                 <AccordionTrigger className="text-left text-base font-semibold text-foreground hover:no-underline hover:text-primary py-5">
