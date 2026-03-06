@@ -106,7 +106,7 @@ export function TeamIdCard({ team, qrDataUrl, qrPayload }: TeamIdCardProps) {
             <p className="mt-3 text-xs text-muted-foreground">
               Show this QR at entry desk for attendance marking.
             </p>
-            <p className="mt-2 rounded-md border border-border bg-secondary/50 p-2 text-[11px] font-mono text-muted-foreground">
+            <p className="mt-2 max-w-full break-all rounded-md border border-border bg-secondary/50 p-2 text-left text-[11px] leading-relaxed font-mono text-muted-foreground whitespace-normal">
               {qrPayload}
             </p>
           </div>
