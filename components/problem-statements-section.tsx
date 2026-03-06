@@ -33,8 +33,7 @@ export function ProblemStatementsSection() {
             </div>
             <h3 className="mt-5 text-xl font-semibold text-foreground">Problem Statements Are Locked</h3>
             <p className="mt-3 text-muted-foreground">
-              Statements will automatically appear after the reveal date configured in
-              `data/problem-statements.json`.
+              Problem statements will be revealed soon.
             </p>
           </div>
         ) : (

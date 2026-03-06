@@ -17,6 +17,27 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'CodeKumbh 2.0 | Code. Create. Conquer.',
   description: 'Join the ultimate hackathon experience. Build, innovate, and compete with the best minds.',
+  applicationName: 'CodeKumbh 2.0',
+  keywords: ['CodeKumbh', 'Hackathon', 'JEC', 'Jabalpur', 'CodeKumbh 2026'],
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [{ url: '/apple-icon.png' }],
+  },
+  openGraph: {
+    type: 'website',
+    url: '/',
+    title: 'CodeKumbh 2.0 | Code. Create. Conquer.',
+    description: 'Join the ultimate hackathon experience. Build, innovate, and compete with the best minds.',
+    siteName: 'CodeKumbh 2.0',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'CodeKumbh 2.0 | Code. Create. Conquer.',
+    description: 'Join the ultimate hackathon experience. Build, innovate, and compete with the best minds.',
+  },
 }
 
 export const viewport = {

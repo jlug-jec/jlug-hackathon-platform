@@ -114,12 +114,12 @@ export function TeamIdCard({ team, qrDataUrl, qrPayload }: TeamIdCardProps) {
       </div>
 
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link
+        {/* <Link
           href="/submit"
           className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
         >
           Submit Project
-        </Link>
+        </Link> */}
         <button
           type="button"
           onClick={downloadCardPng}

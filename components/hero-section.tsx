@@ -84,7 +84,7 @@ export function HeroSection() {
               Register Your Team
             </Button>
           </Link>
-          <Link href="/submit">
+          {/* <Link href="/submit">
             <Button
               size="lg"
               variant="outline"
@@ -92,7 +92,7 @@ export function HeroSection() {
             >
               Submit Project
             </Button>
-          </Link>
+          </Link> */}
         </div>
 
         <div className="mt-16 flex justify-center">
