@@ -16,7 +16,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'CodeKumbh 2.0 | Code. Create. Conquer.',
-  description: 'Join the ultimate hackathon experience. Build, innovate, and compete with the best minds. Registration fee: Rs. 250 per team.',
+  description: 'Join the ultimate hackathon experience. Build, innovate, and compete with the best minds.',
 }
 
 export const viewport = {

@@ -7,6 +7,7 @@ import { EligibilitySection } from "@/components/eligibility-section"
 import { FAQSection } from "@/components/faq-section"
 import { RegistrationForm } from "@/components/registration-form"
 import { Footer } from "@/components/footer"
+import { PrizesSection } from "@/components/prizes-section"
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <HeroSection />
       <AboutSection />
       <TimelineSection />
+      <PrizesSection/>
       <EligibilitySection />
       <FAQSection />
       <RegistrationForm />
