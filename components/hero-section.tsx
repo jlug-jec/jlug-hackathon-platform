@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { ArrowDown, Calendar, MapPin, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -29,9 +30,8 @@ export function HeroSection() {
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[120px]" />
 
       <div
-        className={`relative z-10 mx-auto max-w-5xl text-center transition-all duration-1000 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        }`}
+        className={`relative z-10 mx-auto max-w-5xl text-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+          }`}
       >
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
           <span className="relative flex h-2 w-2">
@@ -57,7 +57,7 @@ export function HeroSection() {
 
         <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground leading-relaxed md:text-xl">
           Build real projects in a high-energy hackathon with your team. Register, complete UPI
-          fee payment, get your QR-enabled team card, and submit before the deadline.
+          fee payment, get your QR-enabled team card.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
@@ -93,6 +93,20 @@ export function HeroSection() {
               Submit Project
             </Button>
           </Link> */}
+        </div>
+        <div className="mt-20 flex flex-col items-center justify-center gap-4 text-center">
+          <Image
+            src="/techkriti.png"
+            alt="Techkriti IIT Kanpur"
+            width={720}
+            height={720}
+            className="opacity-90"
+          />
+
+          <p className="text-lg font-medium text-muted-foreground md:text-xl">
+            Top <span className="text-primary font-semibold">10 Teams</span> qualify directly for
+            <span className="text-primary font-semibold"> IIT Kanpur's Techkriti</span>
+          </p>
         </div>
 
         <div className="mt-16 flex justify-center">

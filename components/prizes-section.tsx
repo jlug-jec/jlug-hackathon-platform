@@ -16,8 +16,8 @@ const prizes = [
   },
   {
     icon: Coffee,
-    title: "Food & Beverages",
-    description: "Meals, snacks, and beverages during the hackathon.",
+    title: "Snacks & Beverages",
+    description: "Snacks and beverages will be provided during the hackathon.",
   },
   {
     icon: Award,

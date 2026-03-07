@@ -14,7 +14,7 @@ const phases = [
     icon: Compass,
     title: "Phase 1: Prarambh (The Beginning)",
     description:
-      "Problem statements open, teams align strategy, and mentors help shape the approach.",
+      "Hacking Begins. Teams align strategy, and mentors help shape the approach.",
   },
   {
     icon: Sparkles,
@@ -31,46 +31,46 @@ const phases = [
 ]
 
 const dayOneTimeline: TimelineItem[] = [
-  { time: "8:30 AM", title: "Team Arrival" },
+  // { time: "8:30 AM", title: "Team Arrival" },
   {
     time: "9:30 AM",
     title: "Registration Desk Opens",
-    description: "Food coupon desk (Rs 100), team ID distribution, attendance check 1.",
+    description: "",
   },
   {
     time: "10:00 AM onward",
     title: "Opening + Hackathon Kickoff",
     description:
-      "Saraswati vandana, faculty welcome, addresses, rule briefing, and club intro followed by start.",
+      "",
   },
   {
     time: "During event",
     title: "Twist Reveals and Sprint",
-    description: "Twists announced via PPT while hacking continues.",
+    description: "",
   },
   {
     time: "Midday",
-    title: "Lunch (Paid) + Quiz Slot",
-    description: "Quiz will be conducted whenever feasible.",
+    title: "Break + Snacks",
+    description: "",
   },
   {
     time: "Later in day",
-    title: "Coverage + Attendance Check 2",
-    description: "News paper article and photo coverage, followed by second attendance checkpoint.",
+    title: "Hacking Resumes + Attendance Check 2",
+    description: "",
   },
   {
     time: "Evening",
-    title: "Sponsor Slot + Snacks",
-    description: "Sponsored segment and food before day wrap-up.",
+    title: "Day 1 Concludes + High-Tea",
+    description: "",
   },
 ]
 
 const dayTwoTimeline: TimelineItem[] = [
-  { time: "8:30 AM", title: "Team Arrival" },
-  { time: "10:00 AM", title: "Day 2 Restart + Attendance Check" },
-  { time: "12:00 PM - 1:00 PM", title: "Submission Window" },
-  { time: "After submission", title: "Lunch / Tea" },
-  { time: "Post lunch", title: "Judging Round + Evaluation" },
+  { time: "9:30 AM", title: "Team Arrival" },
+  { time: "10:00 AM", title: "Day 2 Start + Attendance Check" },
+  { time: "1:00 PM - 2:00 PM", title: "Submission Window" },
+  { time: "2:00 PM - 3:00 PM", title: "Break" },
+  { time: "Post Break", title: "Judging Round + Evaluation" },
   { time: "Final slot", title: "Felicitation" },
 ]
 
@@ -178,7 +178,7 @@ export function TimelineSection() {
         </div>
 
         <div className="mt-8 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
-          Submission portal opens at <span className="font-semibold text-foreground">4:00 PM on March 12, 2026</span> and accepts entries within the configured deadline window.
+          Submission portal opens at <span className="font-semibold text-foreground">1:00 PM on March 13, 2026</span> and accepts entries within the configured deadline window.
         </div>
       </div>
     </section>
