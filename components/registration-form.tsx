@@ -97,6 +97,17 @@ export function RegistrationForm() {
   })
 
   const onDetailsSubmit = (values: TeamDetailsInput) => {
+    const allParticipants = [values.leader, ...values.members]
+
+    const hasFemale = allParticipants.some(
+      (participant) => participant.gender.toLowerCase() === "female"
+    )
+
+    if (!hasFemale) {
+      toast.error("At least one female participant is required in the team.")
+      return
+    }
+
     setTeamDraft(values)
     setStep("payment")
     window.scrollTo({ top: 0, behavior: "smooth" })
