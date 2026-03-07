@@ -29,7 +29,7 @@ const steps = [
     icon: Send,
     title: "5. Project Submission",
     description:
-      "Before deadline, submit your GitHub and demo video links using your team code and leader email.",
+      "On Day 2, before deadline, submit your GitHub and demo video links using your team code and leader email.",
   },
 ]
 
@@ -37,6 +37,7 @@ const rules = [
   "Team size must be between 3 and 5 members.",
   "Every team must include at least one boy and at least one girl.",
   "Each team must have exactly one team leader.",
+  "Teams can have members from any branch and any year.",
   "Registration is confirmed only after payment details are submitted.",
   "Bring valid student ID for all participants at entry.",
   "Project submission after deadline is not accepted.",
@@ -48,7 +49,7 @@ export function RegistrationStepsSection() {
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
           <span className="text-sm font-semibold uppercase tracking-widest text-primary">
-            Event Flow
+            Steps to Proceed
           </span>
           <h2 className="mt-4 text-balance text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
             Registration to Final Submission

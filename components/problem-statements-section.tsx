@@ -13,7 +13,7 @@ export function ProblemStatementsSection() {
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
           <span className="text-sm font-semibold uppercase tracking-widest text-primary">
-            Problem Statements
+            Problem Domains
           </span>
           <h2 className="mt-4 text-balance text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
             {context.title}
@@ -24,6 +24,10 @@ export function ProblemStatementsSection() {
           <p className="mx-auto mt-2 max-w-3xl text-muted-foreground">
             Submission deadline: <span className="font-semibold text-foreground">{deadlineText}</span>
           </p>
+          <p>
+            <span className="mx-auto mt-4 max-w-3xl text-muted-foreground">Note : </span>
+            Teams must decide the problem statement themselves which must fall in either domain and the theme. The theme will be anounced on Day 1
+          </p>
         </div>
 
         {!context.isRevealed ? (
@@ -31,9 +35,9 @@ export function ProblemStatementsSection() {
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Lock className="h-7 w-7" />
             </div>
-            <h3 className="mt-5 text-xl font-semibold text-foreground">Problem Statements Are Locked</h3>
+            <h3 className="mt-5 text-xl font-semibold text-foreground">Problem Domains Are Locked</h3>
             <p className="mt-3 text-muted-foreground">
-              Problem statements will be revealed soon.
+              Problem Domains will be revealed soon.
             </p>
           </div>
         ) : (
