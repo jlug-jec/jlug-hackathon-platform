@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { BrowserQRCodeReader, type IScannerControls } from "@zxing/browser"
-import { Camera, ExternalLink, Loader2, LogOut, QrCode, RefreshCw } from "lucide-react"
+import { Camera, ExternalLink, Loader2, LogOut, QrCode, RefreshCw, User, Mail, Phone, GraduationCap, Calendar, Users } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -14,8 +14,47 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Badge } from "@/components/ui/badge"
 
 type AttendanceDay = "day1" | "day2"
+
+type TeamMember = {
+  id: string
+  role: "leader" | "member"
+  name: string
+  email: string
+  phone: string
+  department: string
+  year: string
+  gender: string
+}
+
+type TeamDetails = {
+  id: string
+  teamCode: string
+  teamName: string
+  paymentStatus: string
+  paymentSubmittedAt: string
+  attendanceDay1MarkedAt: string | null
+  attendanceDay2MarkedAt: string | null
+  createdAt: string
+  members: TeamMember[]
+  submission: {
+    githubUrl: string
+    videoUrl: string
+    presentationUrl: string | null
+    remarks: string | null
+    submittedAt: string
+    updatedAt: string
+  } | null
+}
 
 type DashboardOverview = {
   teamCode: string
@@ -84,6 +123,9 @@ export function AttendanceScanner({
   const [cameraLoading, setCameraLoading] = useState(true)
   const [isMarking, setIsMarking] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [selectedTeam, setSelectedTeam] = useState<TeamDetails | null>(null)
+  const [isLoadingTeamDetails, setIsLoadingTeamDetails] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const controlsRef = useRef<IScannerControls | null>(null)
@@ -232,6 +274,29 @@ export function AttendanceScanner({
     } finally {
       setIsLoggingOut(false)
     }
+  }
+
+  const fetchTeamDetails = async (teamCode: string) => {
+    setIsLoadingTeamDetails(true)
+    try {
+      const response = await fetch(`/api/admin/teams/${teamCode}`)
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data?.error || "Failed to fetch team details")
+      }
+      
+      setSelectedTeam(data.team)
+      setDialogOpen(true)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to fetch team details")
+    } finally {
+      setIsLoadingTeamDetails(false)
+    }
+  }
+
+  const handleTeamClick = (teamCode: string) => {
+    void fetchTeamDetails(teamCode)
   }
 
   return (
@@ -405,7 +470,11 @@ export function AttendanceScanner({
                   </thead>
                   <tbody>
                     {teamOverview.map((team) => (
-                      <tr key={team.teamCode} className="border-t border-border">
+                      <tr
+                        key={team.teamCode}
+                        className="border-t border-border cursor-pointer hover:bg-accent/50 transition-colors"
+                        onClick={() => handleTeamClick(team.teamCode)}
+                      >
                         <td className="px-3 py-2">
                           <p className="font-semibold text-foreground">{team.teamCode}</p>
                           <p className="text-xs text-muted-foreground">{team.teamName}</p>
@@ -463,6 +532,165 @@ export function AttendanceScanner({
             </div>
           </div>
         </div>
+
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl">Team Details</DialogTitle>
+              <DialogDescription>
+                View complete information about the team and its members
+              </DialogDescription>
+            </DialogHeader>
+
+            {isLoadingTeamDetails ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : selectedTeam ? (
+              <div className="space-y-6">
+                {/* Team Info */}
+                <div className="rounded-lg border border-border bg-card p-4">
+                  <h3 className="text-lg font-semibold text-foreground mb-3">Team Information</h3>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Team Code</p>
+                      <p className="text-sm font-semibold text-foreground mt-1">{selectedTeam.teamCode}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Team Name</p>
+                      <p className="text-sm font-semibold text-foreground mt-1">{selectedTeam.teamName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Payment Status</p>
+                      <Badge variant={selectedTeam.paymentStatus === "approved" ? "default" : "secondary"} className="mt-1">
+                        {selectedTeam.paymentStatus}
+                      </Badge>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Registered On</p>
+                      <p className="text-sm text-foreground mt-1">
+                        {new Date(selectedTeam.createdAt).toLocaleDateString("en-IN", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Day 1 Attendance</p>
+                      <p className="text-sm text-foreground mt-1">
+                        {formatAttendanceTime(selectedTeam.attendanceDay1MarkedAt)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wider">Day 2 Attendance</p>
+                      <p className="text-sm text-foreground mt-1">
+                        {formatAttendanceTime(selectedTeam.attendanceDay2MarkedAt)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Team Members */}
+                <div className="rounded-lg border border-border bg-card p-4">
+                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center">
+                    <Users className="mr-2 h-5 w-5" />
+                    Team Members ({selectedTeam.members.length})
+                  </h3>
+                  <div className="space-y-4">
+                    {selectedTeam.members.map((member, index) => (
+                      <div
+                        key={member.id}
+                        className="rounded-lg border border-border bg-secondary/20 p-4"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <h4 className="font-semibold text-foreground flex items-center gap-2">
+                              <User className="h-4 w-4" />
+                              {member.name}
+                            </h4>
+                            <Badge variant={member.role === "leader" ? "default" : "outline"} className="mt-1">
+                              {member.role === "leader" ? "Team Leader" : "Member"}
+                            </Badge>
+                          </div>
+                        </div>
+                        <div className="grid gap-2 sm:grid-cols-2 text-sm">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Mail className="h-4 w-4" />
+                            <span className="break-all">{member.email}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Phone className="h-4 w-4" />
+                            <span>{member.phone}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <GraduationCap className="h-4 w-4" />
+                            <span>{member.department}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            <span>{member.year} Year • {member.gender}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Submission Details */}
+                {selectedTeam.submission && (
+                  <div className="rounded-lg border border-border bg-card p-4">
+                    <h3 className="text-lg font-semibold text-foreground mb-3">Submission Details</h3>
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap gap-2">
+                        <a
+                          href={selectedTeam.submission.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center rounded-md border border-border px-3 py-2 text-sm text-primary hover:bg-accent transition-colors"
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          GitHub Repository
+                        </a>
+                        <a
+                          href={selectedTeam.submission.videoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center rounded-md border border-border px-3 py-2 text-sm text-primary hover:bg-accent transition-colors"
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Video Demo
+                        </a>
+                        {selectedTeam.submission.presentationUrl && (
+                          <a
+                            href={selectedTeam.submission.presentationUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center rounded-md border border-border px-3 py-2 text-sm text-primary hover:bg-accent transition-colors"
+                          >
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Presentation
+                          </a>
+                        )}
+                      </div>
+                      {selectedTeam.submission.remarks && (
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider">Remarks</p>
+                          <p className="text-sm text-foreground mt-1">{selectedTeam.submission.remarks}</p>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          Submitted on {new Date(selectedTeam.submission.submittedAt).toLocaleString("en-IN")}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : null}
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   )
