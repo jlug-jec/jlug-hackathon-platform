@@ -153,9 +153,6 @@ function validateUniqueParticipants(
   const allMembers = [data.leader, ...data.members]
   const emailSet = new Set<string>()
   const phoneSet = new Set<string>()
-  let hasMale = false
-  let hasFemale = false
-
   for (const [index, participant] of allMembers.entries()) {
     const emailKey = participant.email.toLowerCase()
     if (emailSet.has(emailKey)) {
@@ -175,17 +172,5 @@ function validateUniqueParticipants(
       })
     }
     phoneSet.add(participant.phone)
-
-    const normalizedGender = participant.gender.toLowerCase()
-    if (normalizedGender === "male") hasMale = true
-    if (normalizedGender === "female") hasFemale = true
-  }
-
-  if (!hasMale || !hasFemale) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Team must include at least one boy and at least one girl.",
-      path: ["members"],
-    })
   }
 }

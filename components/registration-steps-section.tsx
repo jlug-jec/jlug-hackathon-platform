@@ -35,7 +35,6 @@ const steps = [
 
 const rules = [
   "Team size must be between 3 and 5 members.",
-  "Every team must include at least one boy and at least one girl.",
   "Each team must have exactly one team leader.",
   "Teams can have members from any branch and any year.",
   "Registration is confirmed only after payment details are submitted.",

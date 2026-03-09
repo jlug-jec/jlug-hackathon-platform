@@ -19,12 +19,6 @@ const criteria = [
   },
   {
     icon: UserCheck,
-    title: "Gender Mix",
-    description:
-      "Each team must include at least one boy and one girl participant.",
-  },
-  {
-    icon: UserCheck,
     title: "Team Leader",
     description:
       "Every team must declare one team leader. Leader email is required later for project submission.",

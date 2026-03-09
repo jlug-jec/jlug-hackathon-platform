@@ -11,11 +11,6 @@ const faqs = [
       "Team size must be between 3 and 5 members. One participant must be marked as team leader.",
   },
   {
-    question: "Is gender diversity mandatory in a team?",
-    answer:
-      "Yes. Every team must include at least one boy and at least one girl during registration.",
-  },
-  {
     question: "What is the registration fee?",
     answer:
       "The registration fee is Rs. 250 per team (not per participant). Payment details are filled after team details.",
