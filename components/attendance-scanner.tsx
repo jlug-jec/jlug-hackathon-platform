@@ -286,9 +286,11 @@ export function AttendanceScanner({
         throw new Error(data?.error || "Failed to fetch team details")
       }
       
+      console.log("Team details fetched:", data.team)
       setSelectedTeam(data.team)
       setDialogOpen(true)
     } catch (error) {
+      console.error("Error fetching team details:", error)
       toast.error(error instanceof Error ? error.message : "Failed to fetch team details")
     } finally {
       setIsLoadingTeamDetails(false)

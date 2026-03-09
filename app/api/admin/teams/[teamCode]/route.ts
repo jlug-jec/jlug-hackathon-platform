@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from "next/server"
 
-import { requireAdminSession } from "@/lib/admin-auth"
+import { getAdminSession } from "@/lib/admin-auth"
 import { getTeamCardByCode } from "@/lib/db"
 import { AppError } from "@/lib/errors"
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { teamCode: string } }
+  context: { params: Promise<{ teamCode: string }> }
 ) {
   try {
-    await requireAdminSession()
+    const session = await getAdminSession()
+    if (!session) {
+      throw new AppError("Unauthorized. Please login.", 401)
+    }
     
-    const { teamCode } = params
+    const { teamCode } = await context.params
     
     if (!teamCode) {
       throw new AppError("Team code is required", 400)
