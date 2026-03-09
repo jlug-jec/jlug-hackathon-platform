@@ -481,8 +481,7 @@ export function RegistrationForm() {
               Proceed to Payment
             </Button>
             <p className="text-xs text-muted-foreground">
-              Fee: Rs. {registrationFee} per team. Team size: 3 to 5 participants with at least 1
-              boy and 1 girl.
+              Fee: Rs. {registrationFee} per team. Team size: 3 to 5 participants.
             </p>
           </div>
         </form>
