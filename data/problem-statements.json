@@ -18,10 +18,10 @@
       "tags": ["Smart Cities", "IoT", "Urban Tech"]
     },
     {
-      "id": "D-03",
-      "title": "Climate & Healthcare Tech",
-      "description": "Develop technology-driven solutions that address climate change challenges and revolutionize healthcare delivery and accessibility.",
-      "tags": ["Climate Tech", "Healthcare", "Sustainability"]
+      "id": "D-07",
+      "title": "Smart Utility Automation",
+      "description": "Automate and optimize the management of utilities such as water, electricity, and gas through intelligent systems and data-driven decision making.",
+      "tags": ["Automation", "Utilities", "Smart Grid", "IoT"]
     },
     {
       "id": "D-04",
@@ -40,12 +40,6 @@
       "title": "Open Innovation",
       "description": "Bring your own bold idea to the table. Any domain, any problem — if it creates impact, it belongs here.",
       "tags": ["Open Innovation", "Any Domain"]
-    },
-    {
-      "id": "D-07",
-      "title": "Smart Utility Automation",
-      "description": "Automate and optimize the management of utilities such as water, electricity, and gas through intelligent systems and data-driven decision making.",
-      "tags": ["Automation", "Utilities", "Smart Grid", "IoT"]
     }
   ]
 }
