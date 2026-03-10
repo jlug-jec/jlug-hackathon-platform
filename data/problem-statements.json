@@ -1,18 +1,51 @@
 {
   "title": "CodeKumbh 2.0 Problem Domains",
   "timezone": "Asia/Kolkata",
-  "revealAt": "2026-03-11T10:00:00+05:30",
+  "revealAt": "2026-03-01T00:00:00+05:30",
   "submissionStartsAt": "2026-03-12T16:00:00+05:30",
   "submissionDeadline": "2026-03-13T14:00:00+05:30",
   "items": [
     {
-      "id": "PS-01",
-      "title": "To Be Revealed",
-      "description": "Replace this entry with your real problem statement before reveal date.",
-      "tags": [
-        "TBD"
-      ],
-      "sponsor": "CodeKumbh"
+      "id": "D-01",
+      "title": "Cyber Security & Ethical Hacking",
+      "description": "Build innovative solutions to defend against cyber threats, identify vulnerabilities, and promote ethical security practices in the digital landscape.",
+      "tags": ["Cyber Security", "Ethical Hacking", "InfoSec"]
+    },
+    {
+      "id": "D-02",
+      "title": "Smart Cities and IoT",
+      "description": "Design smart, connected systems that improve urban living through IoT-powered infrastructure, mobility, and resource management.",
+      "tags": ["Smart Cities", "IoT", "Urban Tech"]
+    },
+    {
+      "id": "D-03",
+      "title": "Climate & Healthcare Tech",
+      "description": "Develop technology-driven solutions that address climate change challenges and revolutionize healthcare delivery and accessibility.",
+      "tags": ["Climate Tech", "Healthcare", "Sustainability"]
+    },
+    {
+      "id": "D-04",
+      "title": "AR/VR in Education & Research",
+      "description": "Create immersive augmented and virtual reality experiences that transform education, training, and scientific research.",
+      "tags": ["AR", "VR", "EdTech", "Research"]
+    },
+    {
+      "id": "D-05",
+      "title": "Governance and Civic Tech",
+      "description": "Build transparent, inclusive, and efficient tools that empower citizens and modernize government services and civic engagement.",
+      "tags": ["Governance", "Civic Tech", "Public Services"]
+    },
+    {
+      "id": "D-06",
+      "title": "Open Innovation",
+      "description": "Bring your own bold idea to the table. Any domain, any problem — if it creates impact, it belongs here.",
+      "tags": ["Open Innovation", "Any Domain"]
+    },
+    {
+      "id": "D-07",
+      "title": "Smart Utility Automation",
+      "description": "Automate and optimize the management of utilities such as water, electricity, and gas through intelligent systems and data-driven decision making.",
+      "tags": ["Automation", "Utilities", "Smart Grid", "IoT"]
     }
   ]
 }

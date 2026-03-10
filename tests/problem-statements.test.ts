@@ -3,9 +3,9 @@ import { describe, expect, it } from "vitest"
 import { formatInTimezone, getProblemStatementContext } from "@/lib/problem-statements"
 
 describe("problem statements context", () => {
-  it("stays locked before reveal date", () => {
+  it("is already revealed for current event timeline", () => {
     const context = getProblemStatementContext(new Date("2026-03-10T10:00:00+05:30"))
-    expect(context.isRevealed).toBe(false)
+    expect(context.isRevealed).toBe(true)
   })
 
   it("unlocks after reveal date", () => {

@@ -10,6 +10,8 @@ import { PrizesSection } from "@/components/prizes-section"
 import { RegistrationStepsSection } from "@/components/registration-steps-section"
 import { ProblemStatementsSection } from "@/components/problem-statements-section"
 
+export const dynamic = "force-dynamic"
+
 export default function Home() {
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-background">
