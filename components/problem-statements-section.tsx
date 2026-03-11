@@ -24,10 +24,7 @@ export function ProblemStatementsSection() {
           <p className="mx-auto mt-2 max-w-3xl text-muted-foreground">
             Submission deadline: <span className="font-semibold text-foreground">{deadlineText}</span>
           </p>
-          <p>
-            <span className="mx-auto mt-4 max-w-3xl text-muted-foreground">Note : </span>
-            Teams must decide the problem statement themselves which must fall in either domain and the theme. The theme will be anounced on Day 1
-          </p>
+          
         </div>
 
         {!context.isRevealed ? (
