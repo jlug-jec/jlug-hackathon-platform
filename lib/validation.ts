@@ -102,7 +102,8 @@ export const registrationSchema = teamCoreSchema.extend({
 
 const optionalUrl = z
   .union([z.literal(""), z.string().trim().url("Please provide a valid URL.")])
-  .transform((value) => (value === "" ? undefined : value))
+  .optional()
+  .transform((value) => (!value || value === "" ? undefined : value))
 
 export const submissionSchema = z.object({
   teamCode: z
@@ -116,7 +117,8 @@ export const submissionSchema = z.object({
   presentationUrl: optionalUrl,
   remarks: z
     .union([z.literal(""), z.string().trim().max(1000, "Remarks are too long.")])
-    .transform((value) => (value === "" ? undefined : value)),
+    .optional()
+    .transform((value) => (!value || value === "" ? undefined : value)),
 })
 
 export const adminLoginSchema = z.object({
