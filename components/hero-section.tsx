@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowDown, Calendar, MapPin, Users } from "lucide-react"
+import { ArrowDown, Calendar, CheckCircle2, MapPin, Users } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
@@ -34,11 +34,8 @@ export function HeroSection() {
           }`}
       >
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm text-primary">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-          </span>
-          Registration Open
+          <CheckCircle2 className="h-3.5 w-3.5" />
+          Event Concluded
         </div>
 
         <h1 className="text-balance text-5xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl md:text-7xl lg:text-8xl">
@@ -76,12 +73,12 @@ export function HeroSection() {
         </div>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link href="/register">
+          <Link href="/submissions">
             <Button
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-base px-8 py-6"
             >
-              Register Your Team
+              View Submissions
             </Button>
           </Link>
           {/* <Link href="/submit">

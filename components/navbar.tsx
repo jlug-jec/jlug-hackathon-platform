@@ -53,9 +53,9 @@ export function Navbar() {
           ))}
         </div>
 
-        <Link href="/register" className="hidden md:block">
+        <Link href="/submissions" className="hidden md:block">
           <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-            Register Team
+            View Submissions
           </Button>
         </Link>
 
@@ -81,9 +81,9 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link href="/register" onClick={() => setMobileOpen(false)}>
+            <Link href="/submissions" onClick={() => setMobileOpen(false)}>
               <Button className="mt-2 w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold">
-                Register Team
+                View Submissions
               </Button>
             </Link>
           </div>
