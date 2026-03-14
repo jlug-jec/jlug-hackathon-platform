@@ -9,23 +9,82 @@ export const dynamic = "force-dynamic"
 
 type WinnerDefinition = {
   teamName: string
+  matchKeys: string[]
   title: string
   order: number
 }
 
 const winnerDefinitions: WinnerDefinition[] = [
-  { teamName: "KCMJ", title: "1st Place", order: 1 },
-  { teamName: "Tech Strome", title: "2nd Place", order: 2 },
-  { teamName: "AGHORI CODERS", title: "Civic Tech Domain Winner", order: 3 },
-  { teamName: "ERROR 404", title: "Cybersecurity Domain Winner", order: 4 },
-  { teamName: "TECH MANTRA", title: "Healthcare Domain Winner", order: 5 },
-  { teamName: "SECURE MOTION", title: "SIoT Domain Winner", order: 6 },
-  { teamName: "CODE-O-NAUTS", title: "AR/VR Domain Winner", order: 7 },
-  { teamName: "CODE MATRIX", title: "Open Innovation Domain Winner", order: 8 },
+  { teamName: "KCMJ", matchKeys: ["KCMJ", "TEAMKCMJ"], title: "1st Place", order: 1 },
+  {
+    teamName: "TechStorme",
+    matchKeys: ["TECHSTORME", "TECHSTORM", "TECHSTROME"],
+    title: "2nd Place",
+    order: 2,
+  },
+  {
+    teamName: "AGHORI CODERS",
+    matchKeys: ["AGHORICODERS", "TEAMAGHORICODERS"],
+    title: "Civic Tech Domain Winner",
+    order: 3,
+  },
+  {
+    teamName: "Team Eror 404",
+    matchKeys: ["ERROR404", "TEAMERROR404", "ERRORFOURZEROFOUR"],
+    title: "Cybersecurity Domain Winner",
+    order: 4,
+  },
+  {
+    teamName: "TECH MANTRA",
+    matchKeys: ["TECHMANTRA", "TEAMTECHMANTRA"],
+    title: "Healthcare Domain Winner",
+    order: 5,
+  },
+  {
+    teamName: "SECURE MOTION",
+    matchKeys: ["SECUREMOTION", "TEAMSECUREMOTION"],
+    title: "SIoT Domain Winner",
+    order: 6,
+  },
+  {
+    teamName: "CODE-O-NAUTS",
+    matchKeys: ["CODEONAUTS", "CODENAUTS", "TEAMCODEONAUTS"],
+    title: "AR/VR Domain Winner",
+    order: 7,
+  },
+  {
+    teamName: "The Code Matrix",
+    matchKeys: ["CODEMATRIX", "TEAMCODEMATRIX", "CODEMATRIXX"],
+    title: "Open Innovation Domain Winner",
+    order: 8,
+  },
 ]
 
 function normalizeTeamName(value: string): string {
   return value.toUpperCase().replace(/[^A-Z0-9]/g, "")
+}
+
+function findWinnerByTeamName(teamName: string): WinnerDefinition | null {
+  const normalized = normalizeTeamName(teamName)
+
+  for (const winner of winnerDefinitions) {
+    const normalizedKeys = winner.matchKeys.map((key) => normalizeTeamName(key))
+
+    if (normalizedKeys.some((key) => key === normalized)) {
+      return winner
+    }
+
+    // Allow close variants like "TEAMERROR404" or "CODEMATRIX25" while preventing broad false matches.
+    if (
+      normalizedKeys.some(
+        (key) => key.length >= 6 && (normalized.includes(key) || key.includes(normalized)),
+      )
+    ) {
+      return winner
+    }
+  }
+
+  return null
 }
 
 function formatDateTimeIst(value: string): string {
@@ -76,18 +135,18 @@ export default async function SubmissionsPage() {
     loadError = error instanceof Error ? error.message : "Unable to load submissions right now."
   }
 
-  const winnerMap = new Map(
-    winnerDefinitions.map((winner) => [normalizeTeamName(winner.teamName), winner] as const),
-  )
-
   const winnerSubmissions = submissions
     .map((item) => {
-      const winner = winnerMap.get(normalizeTeamName(item.teamName))
+      const winner = findWinnerByTeamName(item.teamName)
       if (!winner) return null
       return { item, winner }
     })
     .filter((entry): entry is { item: PublicSubmission; winner: WinnerDefinition } => entry !== null)
     .sort((a, b) => a.winner.order - b.winner.order)
+
+  const winnerSubmissionByOrder = new Map(
+    winnerSubmissions.map((entry) => [entry.winner.order, entry.item] as const),
+  )
 
   const pinnedTeamCodes = new Set(winnerSubmissions.map((entry) => entry.item.teamCode))
   const otherSubmissions = submissions.filter((item) => !pinnedTeamCodes.has(item.teamCode))
@@ -184,6 +243,29 @@ export default async function SubmissionsPage() {
     )
   }
 
+  const renderWinnerPlaceholderCard = (winner: WinnerDefinition) => {
+    return (
+      <article
+        key={winner.order}
+        className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm"
+      >
+        <div className="flex h-44 items-center justify-center bg-secondary/50 text-sm text-muted-foreground">
+          Submission links not available
+        </div>
+        <div className="p-5">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <h2 className="text-lg font-semibold leading-tight text-foreground">{winner.teamName}</h2>
+            <span className="inline-flex items-center gap-1 rounded-md border border-amber-500/40 bg-amber-500/10 px-2.5 py-1 text-xs font-semibold text-amber-300">
+              <Trophy className="h-3 w-3" />
+              {winner.title}
+            </span>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">Winner listed by organizers.</p>
+        </div>
+      </article>
+    )
+  }
+
   return (
     <main className="relative min-h-screen overflow-x-hidden bg-background">
       <ParticleBackground />
@@ -207,17 +289,23 @@ export default async function SubmissionsPage() {
             </div>
           ) : (
             <>
-              {winnerSubmissions.length > 0 && (
-                <div className="mt-10">
-                  <div className="mb-4 flex items-center gap-2 text-amber-300">
-                    <Trophy className="h-5 w-5" />
-                    <h2 className="text-xl font-semibold">Winner Projects</h2>
-                  </div>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    {winnerSubmissions.map(({ item, winner }) => renderSubmissionCard(item, winner.title))}
-                  </div>
+              <div className="mt-10">
+                <div className="mb-4 flex items-center gap-2 text-amber-300">
+                  <Trophy className="h-5 w-5" />
+                  <h2 className="text-xl font-semibold">Winner Projects</h2>
                 </div>
-              )}
+                <div className="grid gap-6 md:grid-cols-2">
+                  {winnerDefinitions
+                    .slice()
+                    .sort((a, b) => a.order - b.order)
+                    .map((winner) => {
+                      const matchedSubmission = winnerSubmissionByOrder.get(winner.order)
+                      return matchedSubmission
+                        ? renderSubmissionCard(matchedSubmission, winner.title)
+                        : renderWinnerPlaceholderCard(winner)
+                    })}
+                </div>
+              </div>
 
               {otherSubmissions.length > 0 && (
                 <div className="mt-10">

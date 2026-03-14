@@ -20,10 +20,8 @@ export const metadata: Metadata = {
   applicationName: 'CodeKumbh 2.0',
   keywords: ['CodeKumbh', 'Hackathon', 'JEC', 'Jabalpur', 'CodeKumbh 2026'],
   icons: {
-    icon: [
-      { url: '/favicon.ico' },
-      { url: '/icon.svg', type: 'image/svg+xml' },
-    ],
+    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
+    shortcut: [{ url: '/favicon.ico', type: 'image/x-icon' }],
     apple: [{ url: '/apple-icon.png' }],
   },
   openGraph: {
