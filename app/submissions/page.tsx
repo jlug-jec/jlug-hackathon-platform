@@ -30,7 +30,7 @@ const winnerDefinitions: WinnerDefinition[] = [
   },
   {
     teamName: "Team Eror 404",
-    matchKeys: ["ERROR404", "TEAMERROR404", "ERRORFOURZEROFOUR"],
+    matchKeys: ["ERROR404", "EROR404", "TEAMERROR404", "TEAMEROR404", "ERRORFOURZEROFOUR"],
     title: "Cybersecurity Domain Winner",
     order: 4,
   },
@@ -64,6 +64,47 @@ function normalizeTeamName(value: string): string {
   return value.toUpperCase().replace(/[^A-Z0-9]/g, "")
 }
 
+function isWithinOneEdit(a: string, b: string): boolean {
+  const lenA = a.length
+  const lenB = b.length
+
+  if (Math.abs(lenA - lenB) > 1) {
+    return false
+  }
+
+  let i = 0
+  let j = 0
+  let edits = 0
+
+  while (i < lenA && j < lenB) {
+    if (a[i] === b[j]) {
+      i += 1
+      j += 1
+      continue
+    }
+
+    edits += 1
+    if (edits > 1) {
+      return false
+    }
+
+    if (lenA > lenB) {
+      i += 1
+    } else if (lenB > lenA) {
+      j += 1
+    } else {
+      i += 1
+      j += 1
+    }
+  }
+
+  if (i < lenA || j < lenB) {
+    edits += 1
+  }
+
+  return edits <= 1
+}
+
 function findWinnerByTeamName(teamName: string): WinnerDefinition | null {
   const normalized = normalizeTeamName(teamName)
 
@@ -78,6 +119,15 @@ function findWinnerByTeamName(teamName: string): WinnerDefinition | null {
     if (
       normalizedKeys.some(
         (key) => key.length >= 6 && (normalized.includes(key) || key.includes(normalized)),
+      )
+    ) {
+      return winner
+    }
+
+    // Catch small typos like ERROR vs EROR without making matching too broad.
+    if (
+      normalizedKeys.some(
+        (key) => key.length >= 6 && normalized.length >= 6 && isWithinOneEdit(normalized, key),
       )
     ) {
       return winner
