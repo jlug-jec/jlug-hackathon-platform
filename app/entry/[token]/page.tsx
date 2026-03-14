@@ -7,6 +7,25 @@ import { getTeamByAttendanceToken } from "@/lib/db"
 
 export const dynamic = "force-dynamic"
 
+function formatDateTimeIst(value: string): string {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return "Invalid date"
+  }
+
+  return `${date.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  })} IST`
+}
+
 type EntryTokenPageProps = {
   params: Promise<{ token: string }>
 }
@@ -33,13 +52,13 @@ export default async function EntryTokenPage({ params }: EntryTokenPageProps) {
                 <p className="text-muted-foreground">
                   Day 1:{" "}
                   {team.attendanceDay1MarkedAt
-                    ? `Marked on ${new Date(team.attendanceDay1MarkedAt).toLocaleString("en-IN")}`
+                    ? `Marked on ${formatDateTimeIst(team.attendanceDay1MarkedAt)}`
                     : "Pending"}
                 </p>
                 <p className="text-muted-foreground">
                   Day 2:{" "}
                   {team.attendanceDay2MarkedAt
-                    ? `Marked on ${new Date(team.attendanceDay2MarkedAt).toLocaleString("en-IN")}`
+                    ? `Marked on ${formatDateTimeIst(team.attendanceDay2MarkedAt)}`
                     : "Pending"}
                 </p>
               </div>

@@ -7,6 +7,25 @@ import { getPublicSubmissions, type PublicSubmission } from "@/lib/db"
 
 export const dynamic = "force-dynamic"
 
+function formatDateTimeIst(value: string): string {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return "Invalid date"
+  }
+
+  return `${date.toLocaleString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  })} IST`
+}
+
 function getYouTubeEmbedUrl(url: string): string | null {
   try {
     const u = new URL(url)
@@ -101,7 +120,7 @@ export default async function SubmissionsPage() {
                         </span>
                       </div>
                       <p className="mt-1.5 text-xs text-muted-foreground">
-                        Submitted {new Date(item.updatedAt).toLocaleString("en-IN")}
+                        Submitted {formatDateTimeIst(item.updatedAt)}
                       </p>
 
                       {item.remarks && (
